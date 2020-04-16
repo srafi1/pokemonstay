@@ -9,7 +9,8 @@ function Home() {
   return (
     <ThemeProvider theme={theme}>
       <Box
-        style={{background:"#3D7DCA"}}
+        bgcolor="primary.main"
+        color="text.primary"
         height={1}
         display="flex"
         flexDirection="column"
@@ -17,7 +18,9 @@ function Home() {
         justifyContent="center"
       >
         <img src={logo} width={600} alt="Pokemon Stay" />
-        <h1 style={{fontWeight:"normal"}}>Pokemon GO, but in Google Maps</h1>
+        <h1 style={{fontWeight:"normal"}}>
+          Pokemon GO, but in Google Maps
+        </h1>
         <Button variant="contained" color="secondary">
           Get Started
         </Button>
