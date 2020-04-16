@@ -1,4 +1,4 @@
-module main
+module github.com/srafi1/pokemonstay/backend
 
 go 1.14
 
