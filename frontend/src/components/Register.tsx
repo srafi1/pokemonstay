@@ -53,12 +53,14 @@ function Register(props: any) {
         alignItems="center"
         justifyContent="center">
         <img src={logo} width={600} alt="Pokemon Stay" />
+        <h1>Register</h1>
         <form onSubmit={registerSubmit(credentials)}>
           <Box
             display="flex"
             flexDirection="column"
             className={styles.childSpacing}>
             <TextField
+              autoFocus
               onChange={credentialChange}
               name="username"
               label="Username" />
