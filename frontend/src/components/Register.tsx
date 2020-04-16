@@ -20,18 +20,20 @@ const useStyles = makeStyles(() => createStyles({
   },
 }));
 
-const loginSubmit = (credentials: {
+const registerSubmit = (credentials: {
   username: string,
   password: string
+  confirmPassword: string
 }) => (event: React.FormEvent) => {
   event.preventDefault();
   console.log('submitted:', credentials);
 }
 
-function Login(props: any) {
+function Register(props: any) {
   const [credentials, setCredentials] = useState({
     username: '',
     password: '',
+    confirmPassword: '',
   });
   const credentialChange = (event: any) => {
     let ret: any = {...credentials};
@@ -51,7 +53,7 @@ function Login(props: any) {
         alignItems="center"
         justifyContent="center">
         <img src={logo} width={600} alt="Pokemon Stay" />
-        <form onSubmit={loginSubmit(credentials)}>
+        <form onSubmit={registerSubmit(credentials)}>
           <Box
             display="flex"
             flexDirection="column"
@@ -65,17 +67,22 @@ function Login(props: any) {
               type="password"
               name="password"
               label="Password" />
+            <TextField
+              onChange={credentialChange}
+              type="password"
+              name="confirmPassword"
+              label="Confirm Password" />
             <Button
               type="submit"
               variant="contained"
               color="secondary">
-              Login
+              Register
             </Button>
           </Box>
         </form>
         <Box padding={1}>
-          <Link color="textPrimary" component={RouterLink} to="/register">
-            or register here
+          <Link color="textPrimary" component={RouterLink} to="/login">
+            or login here
           </Link>
         </Box>
       </Box>
@@ -83,5 +90,5 @@ function Login(props: any) {
   );
 }
 
-export default Login;
+export default Register;
 

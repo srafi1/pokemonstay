@@ -7,11 +7,13 @@ import './index.css';
 
 import Home from './components/Home';
 import Login from './components/Login';
+import Register from './components/Register';
 
 const router = (
   <Router>
     <Route exact path="/" component={Home} />
-    <Route path="/login" component={Login} />
+    <Route exact path="/login" component={Login} />
+    <Route exact path="/register" component={Register} />
   </Router>
 )
 
