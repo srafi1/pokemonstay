@@ -2,14 +2,15 @@ package routing
 
 import (
     "encoding/json"
-    "github.com/dgrijalva/jwt-go"
     "net/http"
     "time"
+
+    "golang.org/x/crypto/bcrypt"
+    "github.com/dgrijalva/jwt-go"
+    "github.com/srafi1/pokemonstay/backend/db"
 )
 
 var jwtKey = []byte("super secrety")
-
-var users = map[string]string{}
 
 type Credentials struct {
     Username string `json:"username"`
@@ -37,14 +38,18 @@ func createToken(username string) (*jwt.Token, time.Time) {
 func Login(w http.ResponseWriter, r *http.Request) {
     var creds Credentials
     err := json.NewDecoder(r.Body).Decode(&creds)
-    if err != nil {
+    if r.Method != "POST" || err != nil {
         w.WriteHeader(http.StatusBadRequest)
         return
     }
 
-    expectedPassword, ok := users[creds.Username]
-
-    if !ok || expectedPassword != creds.Password {
+    user, err := db.GetUser(creds.Username)
+    if err != nil {
+        w.WriteHeader(http.StatusUnauthorized)
+        return
+    }
+    err = bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(creds.Password))
+    if err != nil {
         w.WriteHeader(http.StatusUnauthorized)
         return
     }
@@ -67,18 +72,18 @@ func Login(w http.ResponseWriter, r *http.Request) {
 func Register(w http.ResponseWriter, r *http.Request) {
     var creds Credentials
     err := json.NewDecoder(r.Body).Decode(&creds)
-    if err != nil {
+    if r.Method != "POST" || err != nil {
         w.WriteHeader(http.StatusBadRequest)
         return
     }
 
-    _, exists := users[creds.Username]
-    if exists || creds.Password != creds.ConfirmPassword {
+    _, err = db.GetUser(creds.Username)
+    if err == nil || creds.Password != creds.ConfirmPassword {
         w.WriteHeader(http.StatusBadRequest)
         return
     }
 
-    users[creds.Username] = creds.Password
+    db.CreateUser(creds.Username, creds.Password)
 
     token, expirationTime := createToken(creds.Username)
 

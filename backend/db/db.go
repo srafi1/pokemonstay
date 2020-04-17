@@ -10,6 +10,7 @@ import (
 )
 
 var client mongo.Client
+var userCollection *mongo.Collection
 
 func ConnectDB() {
     // Set client options
@@ -28,6 +29,8 @@ func ConnectDB() {
     if err != nil {
         log.Fatal(err)
     }
+
+    userCollection = client.Database("pokemonstay").Collection("users")
 
     fmt.Println("Connected to MongoDB!")
 }
