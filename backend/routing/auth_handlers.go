@@ -69,6 +69,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
     })
 }
 
+func Logout(w http.ResponseWriter, r *http.Request) {
+    expirationTime := time.Now()
+    http.SetCookie(w, &http.Cookie{
+        Name: "token",
+        Expires: expirationTime,
+    })
+}
+
 func Register(w http.ResponseWriter, r *http.Request) {
     var creds Credentials
     err := json.NewDecoder(r.Body).Decode(&creds)

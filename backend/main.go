@@ -16,6 +16,7 @@ func main() {
     http.HandleFunc("/api/login", routing.Login)
     http.HandleFunc("/api/register", routing.Register)
     http.HandleFunc("/api/auth", routing.Auth)
+    http.HandleFunc("/api/logout", routing.Logout)
 
     port := 5000
     fmt.Printf("Listening on port %d\n", port)
