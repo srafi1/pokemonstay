@@ -7,6 +7,7 @@ import './index.css';
 
 import Home from './components/Home';
 import Login from './components/Login';
+import Map from './components/Map';
 import Register from './components/Register';
 
 const router = (
@@ -14,6 +15,7 @@ const router = (
     <Route exact path="/" component={Home} />
     <Route exact path="/login" component={Login} />
     <Route exact path="/register" component={Register} />
+    <Route exact path="/map" component={Map} />
   </Router>
 )
 
