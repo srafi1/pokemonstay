@@ -5,20 +5,11 @@ import {
   Link,
   ThemeProvider,
   TextField,
-  makeStyles,
-  createStyles
 } from '@material-ui/core';
 import theme from '../common/theme';
+import { commonStyles } from '../common/styles';
 import { Link as RouterLink } from 'react-router-dom';
 import logo from '../assets/logo.png';
-
-const useStyles = makeStyles(() => createStyles({
-  childSpacing: {
-    "& *": {
-      margin: 5,
-    },
-  },
-}));
 
 const registerSubmit = (credentials: {
   username: string,
@@ -40,7 +31,7 @@ function Register(props: any) {
     ret[event.currentTarget.name] = event.currentTarget.value;
     setCredentials(ret);
   }
-  const styles = useStyles(props);
+  const styles = commonStyles(props);
 
   return (
     <ThemeProvider theme={theme}>
@@ -61,15 +52,18 @@ function Register(props: any) {
             className={styles.childSpacing}>
             <TextField
               autoFocus
+              className={styles.whiteInput}
               onChange={credentialChange}
               name="username"
               label="Username" />
             <TextField
+              className={styles.whiteInput}
               onChange={credentialChange}
               type="password"
               name="password"
               label="Password" />
             <TextField
+              className={styles.whiteInput}
               onChange={credentialChange}
               type="password"
               name="confirmPassword"
