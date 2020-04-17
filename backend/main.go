@@ -13,9 +13,9 @@ func main() {
     db.ConnectDB()
 
     // auth routes
-    http.HandleFunc("/login", routing.Login)
-    http.HandleFunc("/register", routing.Register)
-    http.HandleFunc("/auth", routing.Auth)
+    http.HandleFunc("/api/login", routing.Login)
+    http.HandleFunc("/api/register", routing.Register)
+    http.HandleFunc("/api/auth", routing.Auth)
 
     port := 5000
     fmt.Printf("Listening on port %d\n", port)
