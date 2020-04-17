@@ -36,13 +36,12 @@ const registerSubmit = (
     fetch('/api/register', {
       method: 'POST',
       body: JSON.stringify(credentials),
+      credentials: 'same-origin',
     })
     .then(((res: Response) => {
       if (res.status !== 200) {
-        console.log('Bad registration');
         setErrorMsg('Failed to register');
       } else {
-        console.log('Registered');
         history.push('/map');
       }
     }));

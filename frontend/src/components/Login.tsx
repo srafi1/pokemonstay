@@ -30,13 +30,12 @@ const loginSubmit = (
     fetch('/api/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
+      credentials: 'same-origin',
     })
     .then(((res: Response) => {
       if (res.status !== 200) {
-        console.log('Bad login');
         setErrorMsg('Failed to login');
       } else {
-        console.log('Logged in');
         history.push('/map');
       }
     }));
