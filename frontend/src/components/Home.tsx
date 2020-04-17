@@ -1,10 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Button, ThemeProvider } from '@material-ui/core';
 import theme from '../common/theme';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import logo from '../assets/logo.png';
 
-function Home() {
+function Home(props: any) {
+  const [checkAuth, setCheckAuth] = useState(true);
+  if (checkAuth) {
+    const token = Cookies.get('token');
+    if (token) {
+      fetch('/api/auth', {
+        method: 'POST',
+        body: JSON.stringify({token}),
+      })
+      .then((res: Response) => {
+        if (res.status === 200) {
+          props.history.push('/map');
+        }
+      })
+    }
+    setCheckAuth(false);
+  }
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -31,4 +48,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default withRouter(Home);

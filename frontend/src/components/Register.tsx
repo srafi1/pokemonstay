@@ -9,13 +9,14 @@ import {
 } from '@material-ui/core';
 import theme from '../common/theme';
 import { commonStyles } from '../common/styles';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, withRouter } from 'react-router-dom';
 import logo from '../assets/logo.png';
 
 const registerSubmit = (
   credentials: { username: string, password: string, confirmPassword: string },
   setErrors: Function,
-  setErrorMsg: Function) => (event: React.FormEvent) => {
+  setErrorMsg: Function,
+  history: any) => (event: React.FormEvent) => {
   event.preventDefault();
   let errors = {username: false, password: false, confirmPassword: false};
   if (!credentials.username || credentials.username === '') {
@@ -42,6 +43,7 @@ const registerSubmit = (
         setErrorMsg('Failed to register');
       } else {
         console.log('Registered');
+        history.push('/map');
       }
     }));
     setErrorMsg('');
@@ -90,7 +92,10 @@ function Register(props: any) {
         <img src={logo} width={600} alt="Pokemon Stay" />
         <h1>Register</h1>
         {errorText}
-        <form onSubmit={registerSubmit(credentials, setErrors, setErrorMsg)}>
+        <form onSubmit={registerSubmit(credentials,
+          setErrors,
+          setErrorMsg,
+          props.history)}>
           <Box
             display="flex"
             flexDirection="column"
@@ -134,5 +139,4 @@ function Register(props: any) {
   );
 }
 
-export default Register;
-
+export default withRouter(Register);

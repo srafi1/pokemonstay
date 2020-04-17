@@ -9,13 +9,14 @@ import {
 } from '@material-ui/core';
 import theme from '../common/theme';
 import { commonStyles } from '../common/styles';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, withRouter } from 'react-router-dom';
 import logo from '../assets/logo.png';
 
 const loginSubmit = (
   credentials: { username: string, password: string },
   setErrors: Function,
-  setErrorMsg: Function) => (event: React.FormEvent) => {
+  setErrorMsg: Function,
+  history: any) => (event: React.FormEvent) => {
   event.preventDefault();
   let errors = {username: false, password: false};
   if (!credentials.username || credentials.username === '') {
@@ -36,6 +37,7 @@ const loginSubmit = (
         setErrorMsg('Failed to login');
       } else {
         console.log('Logged in');
+        history.push('/map');
       }
     }));
     setErrorMsg('');
@@ -80,7 +82,10 @@ function Login(props: any) {
         <img src={logo} width={600} alt="Pokemon Stay" />
         <h1>Login</h1>
         {errorText}
-        <form onSubmit={loginSubmit(credentials, setErrors, setErrorMsg)}>
+        <form onSubmit={loginSubmit(credentials,
+          setErrors,
+          setErrorMsg,
+          props.history)}>
           <Box
             display="flex"
             flexDirection="column"
@@ -117,5 +122,4 @@ function Login(props: any) {
   );
 }
 
-export default Login;
-
+export default withRouter(Login);
