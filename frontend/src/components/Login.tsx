@@ -26,7 +26,18 @@ const loginSubmit = (
   }
   setErrors(errors);
   if (!errors.username && !errors.password) {
-    console.log('submitted');
+    fetch('/api/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    })
+    .then(((res: Response) => {
+      if (res.status !== 200) {
+        console.log('Bad login');
+        setErrorMsg('Failed to login');
+      } else {
+        console.log('Logged in');
+      }
+    }));
     setErrorMsg('');
   } else {
     setErrorMsg('Please fill in all fields');

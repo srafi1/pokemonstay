@@ -24,13 +24,29 @@ const registerSubmit = (
   if (!credentials.password || credentials.password === '') {
     errors.password = true;
   }
-  if (!credentials.confirmPassword || credentials.confirmPassword === '') {
+  if (!credentials.confirmPassword ||
+      credentials.confirmPassword === '' ||
+      credentials.password !== credentials.confirmPassword
+     ) {
     errors.confirmPassword = true;
   }
   setErrors(errors);
   if (!errors.username && !errors.password && !errors.confirmPassword) {
-    console.log('submitted');
+    fetch('/api/register', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    })
+    .then(((res: Response) => {
+      if (res.status !== 200) {
+        console.log('Bad registration');
+        setErrorMsg('Failed to register');
+      } else {
+        console.log('Registered');
+      }
+    }));
     setErrorMsg('');
+  } else if (credentials.password !== credentials.confirmPassword) {
+    setErrorMsg('Passwords must match');
   } else {
     setErrorMsg('Please fill in all fields');
   }
