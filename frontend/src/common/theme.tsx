@@ -8,6 +8,9 @@ export default createMuiTheme({
     primary: {
       main: '#FFFFFF',
     },
+    error: {
+      main: '#FFCB05',
+    },
     secondary: {
       main: '#D53141',
     },
