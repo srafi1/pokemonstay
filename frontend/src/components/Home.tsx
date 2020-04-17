@@ -1,23 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, Button, ThemeProvider } from '@material-ui/core';
 import theme from '../common/theme';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
 
-function Home(props: any) {
-  const [checkAuth, setCheckAuth] = useState(true);
-  if (checkAuth) {
-    fetch('/api/auth', {
-      method: 'POST',
-      credentials: 'same-origin',
-    })
-    .then((res: Response) => {
-      if (res.status === 200) {
-        props.history.push('/map');
-      }
-    })
-    setCheckAuth(false);
-  }
+function Home() {
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -44,4 +31,4 @@ function Home(props: any) {
   );
 }
 
-export default withRouter(Home);
+export default Home;
