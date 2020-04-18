@@ -11,6 +11,7 @@ import Logout from './components/Logout';
 import Map from './components/Map';
 import Register from './components/Register';
 import Unauthenticated from './components/Unauthenticated';
+import Authenticated from './components/Authenticated';
 
 const router = (
   <Router>
@@ -21,7 +22,8 @@ const router = (
     <Route exact path="/register"
       render={() => <Unauthenticated component={Register} />} />
     <Route exact path="/logout" component={Logout} />
-    <Route exact path="/map" component={Map} />
+    <Route exact path="/map"
+      render={() => <Authenticated component={Map} />} />
   </Router>
 )
 
