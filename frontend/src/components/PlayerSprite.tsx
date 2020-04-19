@@ -19,14 +19,15 @@ const useStyles = makeStyles(() => createStyles({
   }
 }))
 
-function PlayerSprite(props: any) {
+function PlayerSprite(props: {onMount: Function}) {
   const [isStanding, setIsStanding] = useState(true);
   useEffect(() => {
     props.onMount(setIsStanding);
-  })
+  }, [ props, setIsStanding ])
   const styles = useStyles(); 
   return (
     <img
+      alt=""
       className={styles.absoluteCenter}
       src={isStanding ? standing : running} />
   );
