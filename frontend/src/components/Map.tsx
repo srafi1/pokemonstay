@@ -9,6 +9,7 @@ import {
 import { compose, withProps, withHandlers } from 'recompose';
 import Loading from './Loading';
 import PlayerSprite from './PlayerSprite';
+import GameMenu from './GameMenu';
 
 interface GameRefs {
   map: GoogleMap | undefined,
@@ -159,6 +160,7 @@ const Map = compose(
         {pokemon}
       </GoogleMap>
       <PlayerSprite onMount={props.onPlayerMounted} />
+      <GameMenu />
     </div>
   )
 });
