@@ -3,10 +3,11 @@ import { Box } from '@material-ui/core';
 import { GoogleMap, withScriptjs, withGoogleMap } from 'react-google-maps';
 import { compose, withProps, withHandlers } from 'recompose';
 import Loading from './Loading';
+import PlayerSprite from './PlayerSprite';
 
 interface GameRefs {
   map: GoogleMap | undefined,
-  player: any,
+  setIsStanding: Function | undefined,
   updateLoop: NodeJS.Timeout | undefined,
   movement: { x: number, y: number },
 }
@@ -29,6 +30,10 @@ const onKeyDown = (refs: GameRefs) => (event: KeyboardEvent) => {
       refs.movement.x += stepSize;
       break;
   }
+  const { x, y } = refs.movement;
+  if (refs.setIsStanding !== undefined && (x !== 0 || y !== 0)) {
+    refs.setIsStanding(false);
+  }
 }
 
 const onKeyUp = (refs: GameRefs) => (event: KeyboardEvent) => {
@@ -45,6 +50,10 @@ const onKeyUp = (refs: GameRefs) => (event: KeyboardEvent) => {
     case 'ArrowRight':
       refs.movement.x -= stepSize;
       break;
+  }
+  const { x, y } = refs.movement;
+  if (refs.setIsStanding !== undefined && x === 0 && y === 0) {
+    refs.setIsStanding(true);
   }
 }
 
@@ -69,7 +78,7 @@ const Map = compose(
   withHandlers(() => {
     const refs: GameRefs = {
       map: undefined,
-      player: undefined,
+      setIsStanding: undefined,
       updateLoop: undefined,
       movement: { x: 0, y: 0 },
     };
@@ -79,20 +88,26 @@ const Map = compose(
         window.addEventListener('keydown', onKeyDown(refs));
         window.addEventListener('keyup', onKeyUp(refs));
         refs.updateLoop = setInterval(update(refs), 50);
+      },
+      onPlayerMounted: () => (setter: Function) => {
+        refs.setIsStanding = setter;
       }
     }
   })
 )((props: any) => (
-  <GoogleMap
-    zoom={20}
-    defaultCenter={{ lat: 40.76784, lng: -73.963901 }}
-    clickableIcons={false}
-    ref={props.onMapMounted}
-    options={{
-      keyboardShortcuts: false,
-      disableDefaultUI: true,
-      gestureHandling: 'none'
-    }} />
+  <div>
+    <GoogleMap
+      zoom={20}
+      defaultCenter={{ lat: 40.76784, lng: -73.963901 }}
+      clickableIcons={false}
+      ref={props.onMapMounted}
+      options={{
+        keyboardShortcuts: false,
+        disableDefaultUI: true,
+        gestureHandling: 'none'
+      }} />
+    <PlayerSprite onMount={props.onPlayerMounted} />
+  </div>
 ));
 
 export default Map;
