@@ -18,6 +18,9 @@ func main() {
     http.HandleFunc("/api/auth", routing.Auth)
     http.HandleFunc("/api/logout", routing.Logout)
 
+    // pokemon routes
+    http.HandleFunc("/api/sprite", routing.GetSprite)
+
     port := 5000
     fmt.Printf("Listening on port %d\n", port)
     log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
