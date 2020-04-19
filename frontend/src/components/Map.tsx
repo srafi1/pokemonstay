@@ -18,15 +18,19 @@ const onKeyDown = (refs: GameRefs) => (event: KeyboardEvent) => {
   if (event.repeat) return;
   switch (event.code) {
     case 'ArrowDown':
+    case 'KeyS':
       refs.movement.y += stepSize;
       break;
     case 'ArrowUp':
+    case 'KeyW':
       refs.movement.y -= stepSize;
       break;
     case 'ArrowLeft':
+    case 'KeyA':
       refs.movement.x -= stepSize;
       break;
     case 'ArrowRight':
+    case 'KeyD':
       refs.movement.x += stepSize;
       break;
   }
@@ -39,15 +43,19 @@ const onKeyDown = (refs: GameRefs) => (event: KeyboardEvent) => {
 const onKeyUp = (refs: GameRefs) => (event: KeyboardEvent) => {
   switch (event.code) {
     case 'ArrowDown':
+    case 'KeyS':
       refs.movement.y -= stepSize;
       break;
     case 'ArrowUp':
+    case 'KeyW':
       refs.movement.y += stepSize;
       break;
     case 'ArrowLeft':
+    case 'KeyA':
       refs.movement.x += stepSize;
       break;
     case 'ArrowRight':
+    case 'KeyD':
       refs.movement.x -= stepSize;
       break;
   }
