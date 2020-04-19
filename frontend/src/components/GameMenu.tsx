@@ -20,6 +20,7 @@ function GameMenu() {
           left="0"
           top="0"
           bgcolor="background.default"
+          color="text.primary"
           height={1}
           width={1}
           display="flex"
