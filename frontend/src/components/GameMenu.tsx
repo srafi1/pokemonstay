@@ -7,6 +7,7 @@ import {
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import theme from '../common/theme';
+import { fade } from '@material-ui/core/styles/colorManipulator';
 import { commonStyles } from '../common/styles';
 
 function GameMenu() {
@@ -19,7 +20,7 @@ function GameMenu() {
           position="absolute"
           left="0"
           top="0"
-          bgcolor="background.default"
+          bgcolor={fade(theme.palette.background.default, 0.8)}
           color="text.primary"
           height={1}
           width={1}
