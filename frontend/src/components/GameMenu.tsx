@@ -7,6 +7,7 @@ import {
   Icon,
   makeStyles,
 } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import theme from '../common/theme';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import { commonStyles } from '../common/styles';
@@ -47,12 +48,15 @@ function GameMenu() {
         className={styles.menuCenter}
         color="secondary"
         onClick={() => setIsOpen(!isOpen)}>
-        <Icon>
-          <img
-            src={pokeball}
-            alt="MENU"
-            className={pokeballStyles.svgIcon} />
-        </Icon>
+        {isOpen ? 
+          <CloseIcon fontSize="large" /> :
+          <Icon>
+            <img
+              src={pokeball}
+              alt="MENU"
+              className={pokeballStyles.svgIcon} />
+          </Icon>
+        }
       </Fab>
     </ThemeProvider>
   )
