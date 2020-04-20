@@ -91,18 +91,21 @@ const update = (refs: GameRefs) => () => {
   }
 }
 
+const sendUpdate = (refs: GameRefs) => () => {
+  if (refs.map !== undefined) {
+    const coords: Coords = {
+      lat: refs.map.getCenter().lat(),
+      lng: refs.map.getCenter().lng(),
+    }
+    refs.socket.send(JSON.stringify(coords));
+  }
+}
+
 const wsOnOpen = (refs: GameRefs) => (event: Event):any => {
   console.log('ws opened');
   // send location to server
-  refs.wsLoop = setInterval(() => {
-    if (refs.map !== undefined) {
-      const coords: Coords = {
-        lat: refs.map.getCenter().lat(),
-        lng: refs.map.getCenter().lng(),
-      }
-      refs.socket.send(JSON.stringify(coords));
-    }
-  }, 5000)
+  sendUpdate(refs)();
+  refs.wsLoop = setInterval(sendUpdate(refs), 5000)
 }
 
 const wsOnClose = (refs: GameRefs) => (event: CloseEvent) => {
