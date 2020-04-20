@@ -15,6 +15,8 @@ interface GameRefs {
   map: GoogleMap | undefined,
   setIsStanding: Function | undefined,
   updateLoop: NodeJS.Timeout | undefined,
+  wsLoop: NodeJS.Timeout | undefined,
+  socket: WebSocket,
   keyDownFunc: (e: KeyboardEvent) => void,
   keyUpFunc: (e: KeyboardEvent) => void,
   movement: { x: number, y: number },
@@ -110,6 +112,22 @@ const spawnPokemon = (refs: GameRefs, loc: Coords, dex: Number) => {
   }
 }
 
+const wsOnOpen = (refs: GameRefs) => (event: Event):any => {
+  console.log('ws opened');
+  refs.wsLoop = setInterval(() => refs.socket.send('hi'), 1000)
+}
+
+const wsOnClose = (refs: GameRefs) => (event: CloseEvent) => {
+  console.log('ws closed');
+  if (refs.wsLoop !== undefined) {
+    clearInterval(refs.wsLoop);
+  }
+}
+
+const wsOnMessage = (refs: GameRefs) => (event: MessageEvent) => {
+  console.log('ws received:', event.data);
+}
+
 const Map = compose(
   // this api key is locked to *.shakilrafi.com
   withProps({
@@ -126,12 +144,17 @@ const Map = compose(
       map: undefined,
       setIsStanding: undefined,
       updateLoop: undefined,
+      wsLoop: undefined,
+      socket: new WebSocket(`ws://${window.location.host}/api/connect`),
       keyDownFunc: () => {},
       keyUpFunc: () => {},
       movement: { x: 0, y: 0 },
       pokemon: [],
       setPokemon: () => {console.log('no')},
     };
+    refs.socket.onopen = wsOnOpen(refs);
+    refs.socket.onclose = wsOnClose(refs);
+    refs.socket.onmessage = wsOnMessage(refs);
     return {
       onMapMounted: () => (ref: GoogleMap) => {
         if (ref) {
