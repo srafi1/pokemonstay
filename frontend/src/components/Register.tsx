@@ -89,7 +89,7 @@ function Register(props: any) {
         alignItems="center"
         justifyContent="center">
         <img src={logo} width={600} alt="Pokemon Stay" />
-        <h1>Register</h1>
+        <Typography variant="h4">Register</Typography>
         {errorText}
         <form onSubmit={registerSubmit(credentials,
           setErrors,

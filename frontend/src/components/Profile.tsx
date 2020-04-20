@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, ThemeProvider } from '@material-ui/core';
+import { Box, Button, ThemeProvider, Typography } from '@material-ui/core';
 import theme from '../common/theme';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
@@ -16,9 +16,9 @@ function Profile() {
         alignItems="center"
         justifyContent="center">
         <img src={logo} width={600} alt="Pokemon Stay" />
-        <h1 style={{fontWeight:"normal"}}>
+        <Typography variant="h3">
           profile page
-        </h1>
+        </Typography>
         <Button 
           variant="contained" 
           color="secondary" 

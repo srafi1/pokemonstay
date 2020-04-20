@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, ThemeProvider } from '@material-ui/core';
+import { Box, Button, ThemeProvider, Typography } from '@material-ui/core';
 import theme from '../common/theme';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
@@ -16,9 +16,11 @@ function Home() {
         alignItems="center"
         justifyContent="center">
         <img src={logo} width={600} alt="Pokemon Stay" />
-        <h1 style={{fontWeight:"normal"}}>
+        <Box pb={2}>
+          <Typography variant="h4">
           Pokemon GO, but in Google Maps
-        </h1>
+          </Typography>
+        </Box>
         <Button 
           variant="contained" 
           color="secondary" 

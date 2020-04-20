@@ -79,7 +79,7 @@ function Login(props: any) {
         alignItems="center"
         justifyContent="center">
         <img src={logo} width={600} alt="Pokemon Stay" />
-        <h1>Login</h1>
+        <Typography variant="h4">Login</Typography>
         {errorText}
         <form onSubmit={loginSubmit(credentials,
           setErrors,
