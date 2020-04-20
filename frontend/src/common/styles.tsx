@@ -5,6 +5,10 @@ const PLAYER_HEIGHT = 60;
 const MENU_ICON_SIZE = 80;
 
 export const commonStyles = makeStyles(() => createStyles({
+  logo: {
+    maxWidth: "80%",
+    width: 400,
+  },
   childSpacing: {
     "& *": {
       margin: 5,

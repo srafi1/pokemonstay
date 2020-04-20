@@ -48,10 +48,7 @@ function GameMenu(props: any) {
           flexDirection="column"
           alignItems="center"
           justifyContent="center">
-          <img
-            src={logo}
-            width={400}
-            alt="Logo" />
+          <img src={logo} className={styles.logo} alt="Logo" />
           <Box
             display="flex"
             alignItems="start"

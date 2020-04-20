@@ -78,7 +78,7 @@ function Login(props: any) {
         flexDirection="column"
         alignItems="center"
         justifyContent="center">
-        <img src={logo} width={600} alt="Pokemon Stay" />
+        <img src={logo} className={styles.logo} alt="Pokemon Stay" />
         <Typography variant="h4">Login</Typography>
         {errorText}
         <form onSubmit={loginSubmit(credentials,

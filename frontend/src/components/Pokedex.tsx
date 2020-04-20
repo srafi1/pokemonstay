@@ -3,8 +3,10 @@ import { Box, Button, ThemeProvider, Typography } from '@material-ui/core';
 import theme from '../common/theme';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
+import { commonStyles } from '../common/styles';
 
 function Pokedex() {
+  const styles = commonStyles();
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -15,7 +17,7 @@ function Pokedex() {
         flexDirection="column"
         alignItems="center"
         justifyContent="center">
-        <img src={logo} width={600} alt="Pokemon Stay" />
+        <img src={logo} className={styles.logo} alt="Pokemon Stay" />
         <Typography variant="h3">
           pokedex page
         </Typography>
