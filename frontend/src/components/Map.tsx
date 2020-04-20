@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box } from '@material-ui/core';
 import {
   GoogleMap,
@@ -15,6 +15,8 @@ interface GameRefs {
   map: GoogleMap | undefined,
   setIsStanding: Function | undefined,
   updateLoop: NodeJS.Timeout | undefined,
+  keyDownFunc: (e: KeyboardEvent) => void,
+  keyUpFunc: (e: KeyboardEvent) => void,
   movement: { x: number, y: number },
   pokemon: any[],
   setPokemon: Function,
@@ -84,7 +86,7 @@ const onKeyUp = (refs: GameRefs) => (event: KeyboardEvent) => {
 }
 
 const update = (refs: GameRefs) => () => {
-  if (refs.map !== undefined) {
+  if (refs.map) {
     const { x, y } = refs.movement;
     refs.map.panBy(x, y);
   }
@@ -122,16 +124,22 @@ const Map = compose(
       map: undefined,
       setIsStanding: undefined,
       updateLoop: undefined,
+      keyDownFunc: () => {},
+      keyUpFunc: () => {},
       movement: { x: 0, y: 0 },
       pokemon: [],
       setPokemon: () => {console.log('no')},
     };
     return {
       onMapMounted: () => (ref: GoogleMap) => {
-        refs.map = ref;
-        window.addEventListener('keydown', onKeyDown(refs));
-        window.addEventListener('keyup', onKeyUp(refs));
-        refs.updateLoop = setInterval(update(refs), 50);
+        if (ref) {
+          refs.map = ref;
+          refs.keyDownFunc = onKeyDown(refs);
+          refs.keyUpFunc = onKeyUp(refs);
+          window.addEventListener('keydown', refs.keyDownFunc);
+          window.addEventListener('keyup', refs.keyUpFunc);
+          refs.updateLoop = setInterval(update(refs), 50);
+        }
       },
       onPlayerMounted: () => (setter: Function) => {
         refs.setIsStanding = setter;
@@ -140,11 +148,20 @@ const Map = compose(
         refs.pokemon = pokemon;
         refs.setPokemon = setPokemon;
       },
+      onUnmount: () => () => {
+        window.removeEventListener('keydown', refs.keyDownFunc);
+        window.removeEventListener('keyup', refs.keyUpFunc);
+        if (refs.updateLoop !== undefined) {
+          console.log('cleared loop');
+          clearInterval(refs.updateLoop);
+        }
+      }
     }
   })
 )((props: any) => {
   const [pokemon, setPokemon] = useState([]);
   props.setPokemonRefs(pokemon, setPokemon);
+  useEffect(() => props.onUnmount);
   return (
     <div>
       <GoogleMap

@@ -5,13 +5,15 @@ import { Route, BrowserRouter as Router } from 'react-router-dom';
 import 'typeface-roboto';
 import './index.css';
 
+import Unauthenticated from './components/Unauthenticated';
+import Authenticated from './components/Authenticated';
 import Home from './components/Home';
 import Login from './components/Login';
 import Logout from './components/Logout';
 import Map from './components/Map';
 import Register from './components/Register';
-import Unauthenticated from './components/Unauthenticated';
-import Authenticated from './components/Authenticated';
+import Profile from './components/Profile';
+import Pokedex from './components/Pokedex';
 
 const router = (
   <Router>
@@ -24,6 +26,10 @@ const router = (
     <Route exact path="/logout" component={Logout} />
     <Route exact path="/map"
       render={() => <Authenticated component={Map} />} />
+    <Route exact path="/profile"
+      render={() => <Authenticated component={Profile} />} />
+    <Route exact path="/pokedex"
+      render={() => <Authenticated component={Pokedex} />} />
   </Router>
 )
 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { withRouter } from 'react-router-dom';
 import {
   Box,
   Fab,
@@ -28,7 +29,7 @@ const useStyles = makeStyles({
   },
 });
 
-function GameMenu() {
+function GameMenu(props: any) {
   const [isOpen, setIsOpen] = useState(false);
   const styles = commonStyles();
   const pokeballStyles = useStyles();
@@ -58,11 +59,11 @@ function GameMenu() {
             <MenuComponent
               image={profile}
               text="Profile"
-              onClick={(e) => {console.log('click2')}} />
+              onClick={(e) => {props.history.push('/profile')}} />
             <MenuComponent
               image={pokedex}
               text="Pokedex"
-              onClick={(e) => {console.log('click')}} />
+              onClick={(e) => {props.history.push('/pokedex')}} />
             <MenuComponent
               image={help}
               text="Help"
@@ -70,7 +71,7 @@ function GameMenu() {
             <MenuComponent
               image={logout}
               text="Logout"
-              onClick={(e) => {console.log('click')}} />
+              onClick={(e) => {props.history.push('/logout')}} />
           </Box>
         </Box>
       </Fade>
@@ -92,4 +93,4 @@ function GameMenu() {
   )
 }
 
-export default GameMenu;
+export default withRouter(GameMenu);
