@@ -19,9 +19,6 @@ const useStyles = makeStyles({
     left: "15%",
     height: '70%',
   },
-  iconRoot: {
-    textAlign: 'center',
-  },
 });
 
 function GameMenu() {
@@ -50,7 +47,7 @@ function GameMenu() {
         className={styles.menuCenter}
         color="secondary"
         onClick={() => setIsOpen(!isOpen)}>
-        <Icon className={pokeballStyles.iconRoot}>
+        <Icon>
           <img
             src={pokeball}
             alt="MENU"
