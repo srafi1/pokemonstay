@@ -30,6 +30,7 @@ interface Coords {
 const stepSize = 10;
 
 const onKeyDown = (refs: GameRefs) => (event: KeyboardEvent) => {
+  event.preventDefault();
   if (event.repeat) return;
   switch (event.code) {
     case 'ArrowDown':
@@ -56,6 +57,7 @@ const onKeyDown = (refs: GameRefs) => (event: KeyboardEvent) => {
 }
 
 const onKeyUp = (refs: GameRefs) => (event: KeyboardEvent) => {
+  event.preventDefault();
   switch (event.code) {
     case 'ArrowDown':
     case 'KeyS':
@@ -149,11 +151,12 @@ const Map = compose(
         refs.setPokemon = setPokemon;
       },
       onUnmount: () => () => {
-        window.removeEventListener('keydown', refs.keyDownFunc);
-        window.removeEventListener('keyup', refs.keyUpFunc);
-        if (refs.updateLoop !== undefined) {
-          console.log('cleared loop');
-          clearInterval(refs.updateLoop);
+        if (!refs.map) {
+          window.removeEventListener('keydown', refs.keyDownFunc);
+          window.removeEventListener('keyup', refs.keyUpFunc);
+          if (refs.updateLoop !== undefined) {
+            clearInterval(refs.updateLoop);
+          }
         }
       }
     }
