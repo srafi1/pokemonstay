@@ -4,15 +4,30 @@ import {
   Fab,
   ThemeProvider,
   Fade,
+  Icon,
+  makeStyles,
 } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
 import theme from '../common/theme';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import { commonStyles } from '../common/styles';
+import pokeball from '../assets/pokeball.svg';
+
+const useStyles = makeStyles({
+  svgIcon: {
+    position: "absolute",
+    top: "15%",
+    left: "15%",
+    height: '70%',
+  },
+  iconRoot: {
+    textAlign: 'center',
+  },
+});
 
 function GameMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const styles = commonStyles();
+  const pokeballStyles = useStyles();
   return (
     <ThemeProvider theme={theme}>
       <Fade in={isOpen}>
@@ -35,7 +50,12 @@ function GameMenu() {
         className={styles.menuCenter}
         color="secondary"
         onClick={() => setIsOpen(!isOpen)}>
-        <AddIcon />
+        <Icon className={pokeballStyles.iconRoot}>
+          <img
+            src={pokeball}
+            alt="MENU"
+            className={pokeballStyles.svgIcon} />
+        </Icon>
       </Fab>
     </ThemeProvider>
   )
