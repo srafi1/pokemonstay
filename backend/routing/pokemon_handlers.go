@@ -1,11 +1,13 @@
 package routing
 
 import (
+    "encoding/json"
 	"fmt"
     "log"
 	"net/http"
 
     "github.com/gorilla/websocket"
+    "github.com/srafi1/pokemonstay/backend/spawn"
 )
 
 var upgrader = websocket.Upgrader{}
@@ -26,16 +28,26 @@ func ServeWS(w http.ResponseWriter, r *http.Request) {
         log.Println(err)
         return
     }
+    defer conn.Close()
 
     for {
         mt, message, err := conn.ReadMessage()
         if err != nil {
-            log.Println("Read error: ", err)
+            log.Println("Read error:", err)
         }
-        log.Println("Message received: ", string(message))
-        err = conn.WriteMessage(mt, []byte("Gotcha"))
+        var coords spawn.Coords
+        err = json.Unmarshal(message, &coords)
         if err != nil {
-            log.Println("Write error: ", err)
+            log.Println("Parse JSON error:", err)
+        }
+        pokemonList := spawn.GetSpawns(coords.Lat, coords.Lng)
+        bytes, err := json.Marshal(pokemonList)
+        if err != nil {
+            log.Println("Error encoding JSON:", err)
+        }
+        err = conn.WriteMessage(mt, bytes)
+        if err != nil {
+            log.Println("Write error:", err)
         }
     }
 }

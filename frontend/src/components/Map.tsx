@@ -29,6 +29,10 @@ interface Coords {
   lng: any,
 }
 
+interface Spawn extends Coords {
+  dex: any,
+}
+
 const stepSize = 10;
 
 const onKeyDown = (refs: GameRefs) => (event: KeyboardEvent) => {
@@ -73,15 +77,6 @@ const onKeyUp = (refs: GameRefs) => (event: KeyboardEvent) => {
     case 'KeyD':
       refs.movement.x = 0;
       break;
-    case 'Space':
-      if (refs.map !== undefined) {
-        const center: Coords = {
-          lat: refs.map.getCenter().lat(),
-          lng: refs.map.getCenter().lng(),
-        };
-        spawnPokemon(refs, center, 1);
-      }
-      break;
   }
   const { x, y } = refs.movement;
   if (refs.setIsStanding !== undefined && x === 0 && y === 0) {
@@ -114,7 +109,16 @@ const spawnPokemon = (refs: GameRefs, loc: Coords, dex: Number) => {
 
 const wsOnOpen = (refs: GameRefs) => (event: Event):any => {
   console.log('ws opened');
-  refs.wsLoop = setInterval(() => refs.socket.send('hi'), 1000)
+  // send location to server
+  refs.wsLoop = setInterval(() => {
+    if (refs.map !== undefined) {
+      const coords: Coords = {
+        lat: refs.map.getCenter().lat(),
+        lng: refs.map.getCenter().lng(),
+      }
+      refs.socket.send(JSON.stringify(coords));
+    }
+  }, 5000)
 }
 
 const wsOnClose = (refs: GameRefs) => (event: CloseEvent) => {
@@ -126,6 +130,17 @@ const wsOnClose = (refs: GameRefs) => (event: CloseEvent) => {
 
 const wsOnMessage = (refs: GameRefs) => (event: MessageEvent) => {
   console.log('ws received:', event.data);
+  const spawn: Spawn[] = JSON.parse(event.data);
+  const newPokemon = spawn.map((pokemon, i) => (
+    <Marker
+      key={i}
+      position={pokemon}
+      icon={{
+      url: `/api/sprite?dex=${pokemon.dex}`,
+      scaledSize: {width: 150, height: 150},
+      }} />
+  ));
+  refs.setPokemon(newPokemon);
 }
 
 const Map = compose(
