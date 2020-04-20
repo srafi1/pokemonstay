@@ -8,10 +8,16 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+import MenuComponent from './MenuComponent';
 import theme from '../common/theme';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import { commonStyles } from '../common/styles';
-import pokeball from '../assets/pokeball.svg';
+import logo from '../assets/logo.png';
+import pokeballIcon from '../assets/pokeball_icon.svg';
+import profile from '../assets/profile.png';
+import pokedex from '../assets/pokedex.png';
+import help from '../assets/help.png';
+import logout from '../assets/logout.png';
 
 const useStyles = makeStyles({
   svgIcon: {
@@ -41,7 +47,31 @@ function GameMenu() {
           flexDirection="column"
           alignItems="center"
           justifyContent="center">
-          MENU OPEN
+          <img
+            src={logo}
+            width={400}
+            alt="Logo" />
+          <Box
+            display="flex"
+            alignItems="start"
+            flexDirection="column">
+            <MenuComponent
+              image={profile}
+              text="Profile"
+              onClick={(e) => {console.log('click2')}} />
+            <MenuComponent
+              image={pokedex}
+              text="Pokedex"
+              onClick={(e) => {console.log('click')}} />
+            <MenuComponent
+              image={help}
+              text="Help"
+              onClick={(e) => {console.log('click')}} />
+            <MenuComponent
+              image={logout}
+              text="Logout"
+              onClick={(e) => {console.log('click')}} />
+          </Box>
         </Box>
       </Fade>
       <Fab
@@ -52,7 +82,7 @@ function GameMenu() {
           <CloseIcon fontSize="large" /> :
           <Icon>
             <img
-              src={pokeball}
+              src={pokeballIcon}
               alt="MENU"
               className={pokeballStyles.svgIcon} />
           </Icon>
