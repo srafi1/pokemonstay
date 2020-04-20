@@ -91,22 +91,6 @@ const update = (refs: GameRefs) => () => {
   }
 }
 
-const spawnPokemon = (refs: GameRefs, loc: Coords, dex: Number) => {
-  if (refs.map !== undefined) {
-    const marker = (
-      <Marker
-        key={refs.pokemon.length}
-        position={loc}
-        icon={{
-          url: `/api/sprite?dex=${dex}`,
-          scaledSize: {width: 150, height: 150},
-        }} />
-    );
-    refs.pokemon = refs.pokemon.concat(marker);
-    refs.setPokemon(refs.pokemon);
-  }
-}
-
 const wsOnOpen = (refs: GameRefs) => (event: Event):any => {
   console.log('ws opened');
   // send location to server
