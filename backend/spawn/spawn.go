@@ -7,7 +7,7 @@ import (
 )
 
 var allPokemon []Spawn
-var spawnLock sync.WaitGroup
+var spawnLock sync.RWMutex
 var MAX_DEX = 807
 
 type Coords struct {
@@ -23,7 +23,7 @@ type Spawn struct {
 
 func Init() {
     allPokemon = make([]Spawn, 0)
-    spawnLock = sync.WaitGroup{}
+    spawnLock = sync.RWMutex{}
     origin := Coords{
         Lat: 40.76784,
         Lng: -73.963901,
@@ -31,8 +31,7 @@ func Init() {
     rand.Seed(time.Now().UnixNano())
     go func() {
         for {
-            spawnLock.Wait()
-            spawnLock.Add(1)
+            spawnLock.Lock()
             // despawn old pokemon
             cutoff := 0
             now := time.Now()
@@ -54,22 +53,22 @@ func Init() {
                 pokemon[i] = p
             }
             allPokemon = append(allPokemon, pokemon...)
-            spawnLock.Done()
+            spawnLock.Unlock()
             time.Sleep(10*time.Second)
         }
     }()
 }
 
 func SpawnPokemon(pokemon []Spawn) {
-    spawnLock.Wait()
-    spawnLock.Add(1)
+    spawnLock.Lock()
     allPokemon = append(allPokemon, pokemon...)
-    spawnLock.Done()
+    spawnLock.Unlock()
 }
 
 func GetSpawns(coords Coords) []Spawn {
-    spawnLock.Wait()
+    spawnLock.RLock()
     ret := make([]Spawn, len(allPokemon))
     copy(ret, allPokemon)
+    spawnLock.RUnlock()
     return ret
 }
