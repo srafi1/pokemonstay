@@ -105,7 +105,7 @@ const wsOnOpen = (refs: GameRefs) => (event: Event):any => {
   console.log('ws opened');
   // send location to server
   sendUpdate(refs)();
-  refs.wsLoop = setInterval(sendUpdate(refs), 5000)
+  refs.wsLoop = setInterval(sendUpdate(refs), 1000)
 }
 
 const wsOnClose = (refs: GameRefs) => (event: CloseEvent) => {
@@ -116,15 +116,14 @@ const wsOnClose = (refs: GameRefs) => (event: CloseEvent) => {
 }
 
 const wsOnMessage = (refs: GameRefs) => (event: MessageEvent) => {
-  console.log('ws received:', event.data);
   const spawn: Spawn[] = JSON.parse(event.data);
   const newPokemon = spawn.map((pokemon, i) => (
     <Marker
       key={i}
       position={pokemon}
       icon={{
-      url: `/api/sprite?dex=${pokemon.dex}`,
-      scaledSize: {width: 150, height: 150},
+        url: `/api/sprite?dex=${pokemon.dex}`,
+        scaledSize: {width: 150, height: 150},
       }} />
   ));
   refs.setPokemon(newPokemon);
