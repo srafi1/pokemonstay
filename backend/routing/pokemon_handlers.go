@@ -34,6 +34,7 @@ func ServeWS(w http.ResponseWriter, r *http.Request) {
         mt, message, err := conn.ReadMessage()
         if err != nil {
             log.Println("Read error:", err)
+            break
         }
         var coords spawn.Coords
         err = json.Unmarshal(message, &coords)
