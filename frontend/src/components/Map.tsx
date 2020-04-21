@@ -36,7 +36,6 @@ interface Spawn extends Coords {
 const stepSize = 10;
 
 const onKeyDown = (refs: GameRefs) => (event: KeyboardEvent) => {
-  event.preventDefault();
   if (event.repeat) return;
   switch (event.code) {
     case 'ArrowDown':
@@ -63,7 +62,6 @@ const onKeyDown = (refs: GameRefs) => (event: KeyboardEvent) => {
 }
 
 const onKeyUp = (refs: GameRefs) => (event: KeyboardEvent) => {
-  event.preventDefault();
   switch (event.code) {
     case 'ArrowDown':
     case 'KeyS':

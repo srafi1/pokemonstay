@@ -75,6 +75,8 @@ function GameMenu(props: any) {
       <Fab
         className={styles.menuCenter}
         color="secondary"
+        onKeyUp={(e) => e.preventDefault()}
+        onKeyPress={(e) => e.preventDefault()}
         onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? 
           <CloseIcon fontSize="large" /> :
