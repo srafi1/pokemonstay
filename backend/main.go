@@ -7,12 +7,14 @@ import (
     "net/url"
     "net/http/httputil"
 
-    "github.com/srafi1/pokemonstay/backend/routing"
     "github.com/srafi1/pokemonstay/backend/db"
+    "github.com/srafi1/pokemonstay/backend/routing"
+    "github.com/srafi1/pokemonstay/backend/spawn"
 )
 
 func main() {
     db.ConnectDB()
+    spawn.Init()
 
     // proxy to frontend (for development)
     url, _ := url.Parse("http://localhost:3000")

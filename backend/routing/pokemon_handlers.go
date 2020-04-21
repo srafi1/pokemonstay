@@ -41,7 +41,7 @@ func ServeWS(w http.ResponseWriter, r *http.Request) {
         if err != nil {
             log.Println("Parse JSON error:", err)
         }
-        pokemonList := spawn.GetSpawns(coords.Lat, coords.Lng)
+        pokemonList := spawn.GetSpawns(coords)
         bytes, err := json.Marshal(pokemonList)
         if err != nil {
             log.Println("Error encoding JSON:", err)
