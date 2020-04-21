@@ -108,15 +108,16 @@ func Register(w http.ResponseWriter, r *http.Request) {
     })
 }
 
-func Auth(w http.ResponseWriter, r *http.Request) {
+// check if token is valid and set headers
+func validAuth(w http.ResponseWriter, r *http.Request) (error, *Claims) {
     tokenCookie, err := r.Cookie("token")
     if err != nil {
         if err == http.ErrNoCookie {
             w.WriteHeader(http.StatusUnauthorized)
-            return
+            return err, nil
         }
         w.WriteHeader(http.StatusBadRequest)
-        return
+        return err, nil
     }
 
     tokenString := tokenCookie.Value
@@ -126,19 +127,27 @@ func Auth(w http.ResponseWriter, r *http.Request) {
     })
     if !token.Valid {
         w.WriteHeader(http.StatusUnauthorized)
-        return
+        return err, nil
     }
     if err != nil {
         if err == jwt.ErrSignatureInvalid {
             w.WriteHeader(http.StatusUnauthorized)
-            return
+            return err, nil
         }
         w.WriteHeader(http.StatusBadRequest)
+        return err, nil
+    }
+    return nil, claims
+}
+
+func Refresh(w http.ResponseWriter, r *http.Request) {
+    err, claims := validAuth(w, r)
+    if err != nil || claims.ExpiresAt > time.Now().Add(time.Hour).Unix() {
         return
     }
-
+    // if token expires within an hour, refresh
     token, expirationTime := createToken(claims.Username)
-    tokenString, err = token.SignedString(jwtKey)
+    tokenString, err := token.SignedString(jwtKey)
     if err != nil {
         w.WriteHeader(http.StatusInternalServerError)
         return
