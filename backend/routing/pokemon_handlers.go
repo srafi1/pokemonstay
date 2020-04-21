@@ -23,8 +23,18 @@ func GetSprite(w http.ResponseWriter, r *http.Request) {
 }
 
 func ServeWS(w http.ResponseWriter, r *http.Request) {
+    // check auth
+    err, claims := validAuth(w, r)
+    if err != nil {
+        log.Println(err)
+        return
+    }
+    username := claims.Username
+
+    // create connection
     conn, err := upgrader.Upgrade(w, r, nil)
     if err != nil {
+        w.WriteHeader(http.StatusInternalServerError)
         log.Println(err)
         return
     }
@@ -40,7 +50,9 @@ func ServeWS(w http.ResponseWriter, r *http.Request) {
         err = json.Unmarshal(message, &coords)
         if err != nil {
             log.Println("Parse JSON error:", err)
+            continue
         }
+        spawn.PutUser(username, coords)
         pokemonList := spawn.GetSpawns(coords)
         bytes, err := json.Marshal(pokemonList)
         if err != nil {
@@ -51,4 +63,5 @@ func ServeWS(w http.ResponseWriter, r *http.Request) {
             log.Println("Write error:", err)
         }
     }
+    spawn.RemoveUser(username)
 }
