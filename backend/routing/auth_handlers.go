@@ -10,6 +10,7 @@ import (
     "github.com/srafi1/pokemonstay/backend/db"
 )
 
+// TODO: use env for jwt key
 var jwtKey = []byte("super secrety")
 
 type Credentials struct {

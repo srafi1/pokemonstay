@@ -6,11 +6,14 @@ import (
     "log"
 	"net/http"
 
+    "github.com/gorilla/sessions"
     "github.com/gorilla/websocket"
     "github.com/srafi1/pokemonstay/backend/spawn"
 )
 
 var upgrader = websocket.Upgrader{}
+// TODO: use env for session key
+var store = sessions.NewCookieStore([]byte("wow much secret"))
 
 func GetSprite(w http.ResponseWriter, r *http.Request) {
 	dex, ok := r.URL.Query()["dex"]
@@ -23,6 +26,12 @@ func GetSprite(w http.ResponseWriter, r *http.Request) {
 }
 
 func ServeWS(w http.ResponseWriter, r *http.Request) {
+    _, err := store.Get(r, "caught-pokemon")
+    if err != nil {
+        log.Println(err)
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
     // check auth
     err, claims := validAuth(w, r)
     if err != nil {
