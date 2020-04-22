@@ -4,8 +4,8 @@ import (
     "fmt"
     "log"
     "net/http"
-    "net/url"
-    "net/http/httputil"
+    _ "net/url"
+    _ "net/http/httputil"
 
     "github.com/srafi1/pokemonstay/backend/db"
     "github.com/srafi1/pokemonstay/backend/routing"
@@ -22,8 +22,7 @@ func main() {
     http.HandleFunc("/", proxy.ServeHTTP)
 
     // serve frontend (for production)
-    //fs := http.FileServer(http.Dir("../frontend/build"))
-    //http.Handle("/", fs)
+    //http.HandleFunc("/", routing.StaticFrontend)
 
     // auth routes
     http.HandleFunc("/api/login", routing.Login)
