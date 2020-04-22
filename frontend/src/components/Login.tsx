@@ -26,7 +26,7 @@ const loginSubmit = (
     errors.password = true;
   }
   setErrors(errors);
-  if (!errors.username && !errors.password) {
+  if (!Object.values(errors).includes(false)) {
     fetch('/api/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
