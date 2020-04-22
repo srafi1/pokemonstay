@@ -32,7 +32,7 @@ const registerSubmit = (
     errors.confirmPassword = true;
   }
   setErrors(errors);
-  if (!Object.values(errors).includes(false)) {
+  if (!Object.values(errors).includes(true)) {
     fetch('/api/register', {
       method: 'POST',
       body: JSON.stringify(credentials),

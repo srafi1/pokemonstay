@@ -26,7 +26,7 @@ const loginSubmit = (
     errors.password = true;
   }
   setErrors(errors);
-  if (!Object.values(errors).includes(false)) {
+  if (!Object.values(errors).includes(true)) {
     fetch('/api/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
@@ -41,6 +41,7 @@ const loginSubmit = (
     }));
     setErrorMsg('');
   } else {
+    console.log(errors)
     setErrorMsg('Please fill in all fields');
   }
 }
