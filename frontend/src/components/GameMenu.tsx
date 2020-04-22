@@ -20,7 +20,19 @@ import pokedex from '../assets/pokedex.png';
 import help from '../assets/help.png';
 import logout from '../assets/logout.png';
 
+const MENU_ICON_SIZE = 80;
 const useStyles = makeStyles({
+  menuCenter: {
+    position: "absolute",
+    left: "50%",
+    marginLeft: MENU_ICON_SIZE / -2,
+    top: "100%",
+    marginTop: MENU_ICON_SIZE * -1.5,
+  },
+  menuButton: {
+    width: MENU_ICON_SIZE,
+    height: MENU_ICON_SIZE,
+  },
   svgIcon: {
     position: "absolute",
     top: "15%",
@@ -32,7 +44,7 @@ const useStyles = makeStyles({
 function GameMenu(props: any) {
   const [isOpen, setIsOpen] = useState(false);
   const styles = commonStyles();
-  const pokeballStyles = useStyles();
+  const menuStyles = useStyles();
   return (
     <ThemeProvider theme={theme}>
       <Fade in={isOpen}>
@@ -72,22 +84,25 @@ function GameMenu(props: any) {
           </Box>
         </Box>
       </Fade>
-      <Fab
-        className={styles.menuCenter}
-        color="secondary"
-        onKeyUp={(e) => e.preventDefault()}
-        onKeyPress={(e) => e.preventDefault()}
-        onClick={() => setIsOpen(!isOpen)}>
-        {isOpen ? 
-          <CloseIcon fontSize="large" /> :
-          <Icon>
-            <img
-              src={pokeballIcon}
-              alt="MENU"
-              className={pokeballStyles.svgIcon} />
-          </Icon>
-        }
-      </Fab>
+      <Box className={menuStyles.menuCenter}>
+        <Fab
+          color="secondary"
+          size="medium"
+          classes={{sizeMedium:menuStyles.menuButton}}
+          onKeyUp={(e) => e.preventDefault()}
+          onKeyPress={(e) => e.preventDefault()}
+          onClick={() => setIsOpen(!isOpen)}>
+          {isOpen ? 
+            <CloseIcon fontSize="large" /> :
+            <Icon>
+              <img
+                src={pokeballIcon}
+                alt="MENU"
+                className={menuStyles.svgIcon} />
+            </Icon>
+          }
+        </Fab>
+      </Box>
     </ThemeProvider>
   )
 }
