@@ -20,7 +20,7 @@ interface GameRefs {
   keyDownFunc: (e: KeyboardEvent) => void,
   keyUpFunc: (e: KeyboardEvent) => void,
   movement: { x: number, y: number },
-  pokemon: any[],
+  pokemon: Spawn[],
   setPokemon: Function,
 }
 
@@ -100,30 +100,36 @@ const sendUpdate = (refs: GameRefs) => () => {
 }
 
 const wsOnOpen = (refs: GameRefs) => (event: Event):any => {
-  console.log('ws opened');
+  console.log('Connected to server');
   // send location to server
   sendUpdate(refs)();
   refs.wsLoop = setInterval(sendUpdate(refs), 1000)
 }
 
 const wsOnClose = (refs: GameRefs) => (event: CloseEvent) => {
-  console.log('ws closed');
+  console.log('Disconnected from server');
   if (refs.wsLoop !== undefined) {
     clearInterval(refs.wsLoop);
   }
 }
 
+interface Update {
+  spawn: Spawn[],
+  despawn: Spawn[],
+}
+
 const wsOnMessage = (refs: GameRefs) => (event: MessageEvent) => {
-  const spawn: Spawn[] = JSON.parse(event.data);
-  const newPokemon = spawn.map((pokemon, i) => (
-    <Marker
-      key={i}
-      position={pokemon}
-      icon={{
-        url: `/api/sprite?dex=${pokemon.dex}`,
-        scaledSize: {width: 150, height: 150},
-      }} />
-  ));
+  const update: Update = JSON.parse(event.data);
+  refs.pokemon.push(...update.spawn)
+  const newPokemon = refs.pokemon.filter((poke1 => {
+    let found = false;
+    update.despawn.forEach(poke2 => {
+      if (JSON.stringify(poke1) === JSON.stringify(poke2)) {
+        found = true;
+      }
+    });
+    return !found;
+  }));
   refs.setPokemon(newPokemon);
 }
 
@@ -184,7 +190,7 @@ const Map = compose(
     }
   })
 )((props: any) => {
-  const [pokemon, setPokemon] = useState([]);
+  const [pokemon, setPokemon] = useState<Spawn[]>([]);
   props.setPokemonRefs(pokemon, setPokemon);
   useEffect(() => props.onUnmount);
   return (
@@ -199,7 +205,15 @@ const Map = compose(
           disableDefaultUI: true,
           gestureHandling: 'none'
         }} >
-        {pokemon}
+        {pokemon.map((poke, i) => (
+          <Marker
+            key={i}
+            position={{lat:poke.lat, lng:poke.lng}}
+            icon={{
+              url: `/api/sprite?dex=${poke.dex}`,
+              scaledSize: {width: 150, height: 150},
+            }} />
+        ))}
       </GoogleMap>
       <PlayerSprite onMount={props.onPlayerMounted} />
       <GameMenu />
