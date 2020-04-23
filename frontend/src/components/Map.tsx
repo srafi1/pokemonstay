@@ -40,19 +40,19 @@ const onKeyDown = (refs: GameRefs) => (event: KeyboardEvent) => {
   switch (event.code) {
     case 'ArrowDown':
     case 'KeyS':
-      refs.movement.y += stepSize;
+      refs.movement.y = stepSize;
       break;
     case 'ArrowUp':
     case 'KeyW':
-      refs.movement.y -= stepSize;
+      refs.movement.y = -stepSize;
       break;
     case 'ArrowLeft':
     case 'KeyA':
-      refs.movement.x -= stepSize;
+      refs.movement.x = -stepSize;
       break;
     case 'ArrowRight':
     case 'KeyD':
-      refs.movement.x += stepSize;
+      refs.movement.x = stepSize;
       break;
   }
   const { x, y } = refs.movement;
