@@ -9,7 +9,8 @@ import (
 )
 
 type Encounter struct {
-    spawn.Spawn
+    spawn.Coords
+    Dex int
     Caught bool
 }
 
@@ -44,7 +45,11 @@ func CreateUser(username string, password string) error {
 }
 
 func AddEncounter(username string, pokemon spawn.Spawn, caught bool) error {
-    encounter := Encounter{pokemon, caught}
+    encounter := Encounter{
+        pokemon.Coords,
+        pokemon.Dex,
+        caught,
+    }
     _, err := userCollection.UpdateOne(
         context.TODO(),
         bson.M{"username": username},
