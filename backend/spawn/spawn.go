@@ -99,3 +99,15 @@ func GetEncounters(user string) map[Spawn]bool {
     encounters, _ := userEncounters[user]
     return encounters
 }
+
+func CleanupEncounters(user string) {
+    encounters, ok := userEncounters[user]
+    if ok {
+        now := time.Now()
+        for k := range encounters {
+            if now.After(k.Despawn) {
+                delete(encounters, k)
+            }
+        }
+    }
+}

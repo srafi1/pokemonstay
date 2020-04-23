@@ -115,10 +115,14 @@ func ServeWS(w http.ResponseWriter, r *http.Request) {
                 }
             }
 
+            // send update
             err = conn.WriteJSON(update)
             if err != nil {
                 log.Println("Write error:", err)
             }
+
+            // clean up this user's encounter map
+            spawn.CleanupEncounters(username)
         } else if clientUpdate.Type == "encounter" {
             var pokemon spawn.Spawn
             found := false
@@ -136,8 +140,6 @@ func ServeWS(w http.ResponseWriter, r *http.Request) {
                 err = db.AddEncounter(username, pokemon, clientUpdate.Caught)
                 if err != nil {
                     log.Println(err)
-                } else {
-                    log.Println("Caught pokemon:", pokemon.Dex)
                 }
             }
         }
