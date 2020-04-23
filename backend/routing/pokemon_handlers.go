@@ -64,7 +64,7 @@ func ServeWS(w http.ResponseWriter, r *http.Request) {
     }
 
     for {
-        mt, message, err := conn.ReadMessage()
+        _, message, err := conn.ReadMessage()
         if err != nil {
             log.Println("Read error:", err)
             break
@@ -115,11 +115,7 @@ func ServeWS(w http.ResponseWriter, r *http.Request) {
                 }
             }
 
-            bytes, err := json.Marshal(update)
-            if err != nil {
-                log.Println("Error encoding JSON:", err)
-            }
-            err = conn.WriteMessage(mt, bytes)
+            err = conn.WriteJSON(update)
             if err != nil {
                 log.Println("Write error:", err)
             }
