@@ -26,8 +26,8 @@ interface GameRefs {
 }
 
 interface Coords {
-  lat: any,
-  lng: any,
+  lat: number,
+  lng: number,
 }
 
 interface Spawn extends Coords {
@@ -207,9 +207,9 @@ const Map = compose(
           disableDefaultUI: true,
           gestureHandling: 'none'
         }} >
-        {pokemon.map((poke, i) => (
+        {pokemon.map(poke => (
           <Marker
-            key={i}
+            key={`${poke.dex} ${poke.lat.toFixed(4)} ${poke.lng.toFixed(4)}`}
             position={{lat:poke.lat, lng:poke.lng}}
             icon={{
               url: `/api/sprite?dex=${poke.dex}`,
