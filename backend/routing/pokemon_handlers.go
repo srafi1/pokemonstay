@@ -7,14 +7,13 @@ import (
 	"net/http"
     "time"
 
-    "github.com/gorilla/sessions"
     "github.com/gorilla/websocket"
+    "github.com/srafi1/pokemonstay/backend/db"
     "github.com/srafi1/pokemonstay/backend/spawn"
 )
 
 var upgrader = websocket.Upgrader{}
 // TODO: use env for session key
-var store = sessions.NewCookieStore([]byte("wow much secret"))
 
 func GetSprite(w http.ResponseWriter, r *http.Request) {
 	dex, ok := r.URL.Query()["dex"]
@@ -28,16 +27,18 @@ func GetSprite(w http.ResponseWriter, r *http.Request) {
 
 type Update struct {
     NewSpawns []spawn.Spawn `json:"spawn"`
-    Despawn []spawn.Spawn `json:"despawn"`
+    Despawn   []spawn.Spawn `json:"despawn"`
+}
+
+type ClientUpdate struct {
+    Type   string  `json:"type"`
+    Lat    float64 `json:"lat"`
+    Lng    float64 `json:"lng"`
+    Dex    int     `json:"dex"`
+    Caught bool    `json:"caught"`
 }
 
 func ServeWS(w http.ResponseWriter, r *http.Request) {
-    _, err := store.Get(r, "caught-pokemon")
-    if err != nil {
-        log.Println(err)
-        w.WriteHeader(http.StatusInternalServerError)
-        return
-    }
     // check auth
     err, claims := validAuth(w, r)
     if err != nil {
@@ -57,6 +58,10 @@ func ServeWS(w http.ResponseWriter, r *http.Request) {
 
     // pokemon that have been sent already
     sentSpawns := make([]spawn.Spawn, 0)
+    encountered := spawn.GetEncounters(username)
+    for k := range encountered {
+        sentSpawns = append(sentSpawns, k)
+    }
 
     for {
         mt, message, err := conn.ReadMessage()
@@ -66,51 +71,79 @@ func ServeWS(w http.ResponseWriter, r *http.Request) {
         }
 
         // parse coords
-        var coords spawn.Coords
-        err = json.Unmarshal(message, &coords)
+        var clientUpdate ClientUpdate
+        err = json.Unmarshal(message, &clientUpdate)
         if err != nil {
             log.Println("Parse JSON error:", err)
             continue
         }
-        // save new coords
-        spawn.PutUser(username, coords)
 
-        // get despawned pokemon
-        update := &Update{
-            NewSpawns: make([]spawn.Spawn, 0),
-            Despawn: make([]spawn.Spawn, 0),
-        }
-        now := time.Now()
-        for i, val := range sentSpawns {
-            if !now.After(val.Despawn) {
-                update.Despawn = sentSpawns[:i]
-                sentSpawns = sentSpawns[i:]
-                break
+        if clientUpdate.Type == "location" {
+            // save new coords
+            coords := spawn.Coords{
+                Lat: clientUpdate.Lat,
+                Lng: clientUpdate.Lng,
             }
-        }
+            spawn.PutUser(username, coords)
 
-        // get newly spawned pokemon
-        currentSpawns := spawn.GetSpawns(coords)
-        for _, val1 := range currentSpawns {
-            found := false
-            for _, val2 := range sentSpawns {
-                if val1 == val2 {
-                    found = true
+            // get despawned pokemon
+            update := &Update{
+                NewSpawns: make([]spawn.Spawn, 0),
+                Despawn: make([]spawn.Spawn, 0),
+            }
+            now := time.Now()
+            for i, val := range sentSpawns {
+                if !now.After(val.Despawn) {
+                    update.Despawn = sentSpawns[:i]
+                    sentSpawns = sentSpawns[i:]
+                    break
                 }
             }
-            if !found {
-                update.NewSpawns = append(update.NewSpawns, val1)
-                sentSpawns = append(sentSpawns, val1)
-            }
-        }
 
-        bytes, err := json.Marshal(update)
-        if err != nil {
-            log.Println("Error encoding JSON:", err)
-        }
-        err = conn.WriteMessage(mt, bytes)
-        if err != nil {
-            log.Println("Write error:", err)
+            // get newly spawned pokemon
+            currentSpawns := spawn.GetSpawns(coords)
+            for _, val1 := range currentSpawns {
+                sent := false
+                for _, val2 := range sentSpawns {
+                    if val1 == val2 {
+                        sent = true
+                    }
+                }
+                if !sent {
+                    update.NewSpawns = append(update.NewSpawns, val1)
+                    sentSpawns = append(sentSpawns, val1)
+                }
+            }
+
+            bytes, err := json.Marshal(update)
+            if err != nil {
+                log.Println("Error encoding JSON:", err)
+            }
+            err = conn.WriteMessage(mt, bytes)
+            if err != nil {
+                log.Println("Write error:", err)
+            }
+        } else if clientUpdate.Type == "encounter" {
+            var pokemon spawn.Spawn
+            found := false
+            for _, val := range sentSpawns {
+                if val.Lat == clientUpdate.Lat &&
+                val.Lng == clientUpdate.Lng &&
+                val.Dex == clientUpdate.Dex {
+                    pokemon = val
+                    found = true
+                    break
+                }
+            }
+            if found {
+                spawn.AddEncounter(username, pokemon)
+                err = db.AddEncounter(username, pokemon, clientUpdate.Caught)
+                if err != nil {
+                    log.Println(err)
+                } else {
+                    log.Println("Caught pokemon:", pokemon.Dex)
+                }
+            }
         }
     }
     spawn.RemoveUser(username)

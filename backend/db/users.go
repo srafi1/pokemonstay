@@ -5,11 +5,18 @@ import (
 
     "golang.org/x/crypto/bcrypt"
     "go.mongodb.org/mongo-driver/bson"
+    "github.com/srafi1/pokemonstay/backend/spawn"
 )
+
+type Encounter struct {
+    spawn.Spawn
+    Caught bool
+}
 
 type User struct {
     Username string
     HashedPassword string
+    Encounters []Encounter
 }
 
 func GetUser(username string) (User, error) {
@@ -30,7 +37,20 @@ func CreateUser(username string, password string) error {
     user := User{
         username,
         string(hashedPassword),
+        make([]Encounter, 0),
     }
     _, err = userCollection.InsertOne(context.TODO(), user)
+    return err
+}
+
+func AddEncounter(username string, pokemon spawn.Spawn, caught bool) error {
+    encounter := Encounter{pokemon, caught}
+    _, err := userCollection.UpdateOne(
+        context.TODO(),
+        bson.M{"username": username},
+        bson.D{
+            {"$push", bson.D{{"encounters", encounter}}},
+        },
+    )
     return err
 }

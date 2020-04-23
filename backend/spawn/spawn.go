@@ -9,6 +9,7 @@ import (
 var pokemonQueue []Spawn
 var userLocs map[string]Coords
 var spawnLock sync.RWMutex
+var userEncounters map[string]map[Spawn]bool
 var MAX_DEX = 807
 
 type Coords struct {
@@ -26,6 +27,7 @@ func Init() {
     pokemonQueue = make([]Spawn, 0)
     userLocs = make(map[string]Coords, 0)
     spawnLock = sync.RWMutex{}
+    userEncounters = make(map[string]map[Spawn]bool)
     rand.Seed(time.Now().UnixNano())
     go func() {
         for {
@@ -78,10 +80,22 @@ func PutUser(user string, loc Coords) {
     spawnLock.Lock()
     userLocs[user] = loc
     spawnLock.Unlock()
+    if _, ok := userEncounters[user]; !ok {
+        userEncounters[user] = make(map[Spawn]bool)
+    }
 }
 
 func RemoveUser(user string) {
     spawnLock.Lock()
     delete(userLocs, user)
     spawnLock.Unlock()
+}
+
+func AddEncounter(user string, pokemon Spawn) {
+    userEncounters[user][pokemon] = true
+}
+
+func GetEncounters(user string) map[Spawn]bool {
+    encounters, _ := userEncounters[user]
+    return encounters
 }

@@ -10,6 +10,7 @@ import { compose, withProps, withHandlers } from 'recompose';
 import Loading from './Loading';
 import PlayerSprite from './PlayerSprite';
 import GameMenu from './GameMenu';
+import EncounterDialog from './EncounterDialog';
 
 interface GameRefs {
   map: GoogleMap | undefined,
@@ -23,6 +24,8 @@ interface GameRefs {
   movement: { x: number, y: number },
   pokemon: Spawn[],
   setPokemon: Function,
+  encounter: any,
+  setEncounter: Function,
 }
 
 interface Coords {
@@ -92,22 +95,23 @@ const update = (refs: GameRefs) => () => {
 
 const sendUpdate = (refs: GameRefs) => () => {
   if (refs.map !== undefined) {
-    const coords: Coords = {
+    const update = {
+      type: 'location',
       lat: refs.map.getCenter().lat(),
       lng: refs.map.getCenter().lng(),
     }
-    refs.socket.send(JSON.stringify(coords));
+    refs.socket.send(JSON.stringify(update));
   }
 }
 
-const wsOnOpen = (refs: GameRefs) => (event: Event):any => {
+const wsOnOpen = (refs: GameRefs) => () => {
   console.log('Connected to server');
   // send location to server
   sendUpdate(refs)();
   refs.wsLoop = setInterval(sendUpdate(refs), 1000)
 }
 
-const wsOnClose = (refs: GameRefs) => (event: CloseEvent) => {
+const wsOnClose = (refs: GameRefs) => () => {
   console.log('Disconnected from server');
   if (refs.wsLoop !== undefined) {
     clearInterval(refs.wsLoop);
@@ -157,7 +161,9 @@ const Map = compose(
       keyUpFunc: () => {},
       movement: { x: 0, y: 0 },
       pokemon: [],
-      setPokemon: () => {console.log('no')},
+      setPokemon: () => {},
+      encounter: {},
+      setEncounter: () => {},
     };
     refs.socket.onopen = wsOnOpen(refs);
     refs.socket.onclose = wsOnClose(refs);
@@ -176,9 +182,34 @@ const Map = compose(
       onPlayerMounted: () => (setter: Function) => {
         refs.setIsStanding = setter;
       },
-      setPokemonRefs: () => (pokemon: any[], setPokemon: Function) => {
+      setPokemonRefs: () => (pokemon: any[], setPokemon: Function, encounter: any, setEncounter: Function) => {
         refs.pokemon = pokemon;
         refs.setPokemon = setPokemon;
+        refs.encounter = encounter;
+        refs.setEncounter = setEncounter;
+      },
+      startEncounter: () => (pokemon: Spawn) => {
+        refs.paused = true;
+        refs.setEncounter({
+          active: true,
+          pokemon: pokemon,
+        });
+      },
+      completeEncounter: () => (caught: boolean) => {
+        refs.paused = false;
+        refs.setEncounter({active: false});
+        console.log(`Caught pokemon: ${caught}`);
+        console.log(`Pokemon: ${refs.encounter.pokemon.dex}`)
+        const update = {
+          type: "encounter",
+          caught: caught,
+          ...refs.encounter.pokemon,
+        };
+        refs.socket.send(JSON.stringify(update));
+        // remove the pokemon marker
+        const toRemove = JSON.stringify(refs.encounter.pokemon);
+        const newPokemon = refs.pokemon.filter(poke => JSON.stringify(poke) !== toRemove);
+        refs.setPokemon(newPokemon);
       },
       onUnmount: () => () => {
         if (!refs.map) {
@@ -193,7 +224,8 @@ const Map = compose(
   })
 )((props: any) => {
   const [pokemon, setPokemon] = useState<Spawn[]>([]);
-  props.setPokemonRefs(pokemon, setPokemon);
+  const [encounter, setEncounter] = useState({active: false});
+  props.setPokemonRefs(pokemon, setPokemon, encounter, setEncounter);
   useEffect(() => props.onUnmount);
   return (
     <div>
@@ -211,6 +243,7 @@ const Map = compose(
           <Marker
             key={`${poke.dex} ${poke.lat.toFixed(4)} ${poke.lng.toFixed(4)}`}
             position={{lat:poke.lat, lng:poke.lng}}
+            onClick={() => props.startEncounter(poke)}
             icon={{
               url: `/api/sprite?dex=${poke.dex}`,
               scaledSize: {width: 150, height: 150},
@@ -218,6 +251,9 @@ const Map = compose(
         ))}
       </GoogleMap>
       <PlayerSprite onMount={props.onPlayerMounted} />
+      <EncounterDialog
+        encounter={encounter}
+        complete={props.completeEncounter} />
       <GameMenu />
     </div>
   )
