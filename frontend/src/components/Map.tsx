@@ -106,9 +106,7 @@ const sendUpdate = (refs: GameRefs) => () => {
 
 const wsOnOpen = (refs: GameRefs) => () => {
   console.log('Connected to server');
-  // send location to server
-  sendUpdate(refs)();
-  refs.wsLoop = setInterval(sendUpdate(refs), 1000)
+  // don't start wsLoop until initial location is received from server
 }
 
 const wsOnClose = (refs: GameRefs) => () => {
@@ -151,6 +149,11 @@ const wsOnMessage = (refs: GameRefs) => (event: MessageEvent) => {
     refs.setPokemon(newPokemon);
   } else if (update.type === "location" && refs.map !== undefined) {
     refs.map.panTo({lat: update.lat, lng: update.lng});
+    if (refs.wsLoop === undefined) {
+      // send location to server
+      sendUpdate(refs)();
+      refs.wsLoop = setInterval(sendUpdate(refs), 1000)
+    }
   }
 }
 
