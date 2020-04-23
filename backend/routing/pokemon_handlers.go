@@ -25,7 +25,10 @@ func GetSprite(w http.ResponseWriter, r *http.Request) {
     http.Redirect(w, r, url, http.StatusMovedPermanently)
 }
 
-type Update struct {
+type ServerUpdate struct {
+    Type      string        `json:"type"`
+    Lat       float64       `json:"lat"`
+    Lng       float64       `json:"lng"`
     NewSpawns []spawn.Spawn `json:"spawn"`
     Despawn   []spawn.Spawn `json:"despawn"`
 }
@@ -56,6 +59,22 @@ func ServeWS(w http.ResponseWriter, r *http.Request) {
     }
     defer conn.Close()
 
+    user, err := db.GetUser(username)
+    if err != nil {
+        log.Println(err)
+    } else {
+        // send initial location
+        update := &ServerUpdate{
+            Type: "location",
+            Lat: user.Location.Lat,
+            Lng: user.Location.Lng,
+        }
+        err = conn.WriteJSON(update)
+        if err != nil {
+            log.Println("Write error:", err)
+        }
+    }
+
     // pokemon that have been sent already
     sentSpawns := make([]spawn.Spawn, 0)
     encountered := spawn.GetEncounters(username)
@@ -85,9 +104,14 @@ func ServeWS(w http.ResponseWriter, r *http.Request) {
                 Lng: clientUpdate.Lng,
             }
             spawn.PutUser(username, coords)
+            err = db.SetLocation(username, coords)
+            if err != nil {
+                log.Println(err)
+            }
 
             // get despawned pokemon
-            update := &Update{
+            update := &ServerUpdate{
+                Type: "spawn",
                 NewSpawns: make([]spawn.Spawn, 0),
                 Despawn: make([]spawn.Spawn, 0),
             }

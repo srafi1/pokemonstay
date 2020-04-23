@@ -17,6 +17,7 @@ type Encounter struct {
 type User struct {
     Username string
     HashedPassword string
+    Location *spawn.Coords
     Encounters []Encounter
 }
 
@@ -36,11 +37,26 @@ func CreateUser(username string, password string) error {
         return err
     }
     user := User{
-        username,
-        string(hashedPassword),
-        make([]Encounter, 0),
+        Username: username,
+        HashedPassword: string(hashedPassword),
+        Location: &spawn.Coords{
+            Lat: 40.76784,
+            Lng: -73.963901,
+        },
+        Encounters: make([]Encounter, 0),
     }
     _, err = userCollection.InsertOne(context.TODO(), user)
+    return err
+}
+
+func SetLocation(username string, location spawn.Coords) error {
+    _, err := userCollection.UpdateOne(
+        context.TODO(),
+        bson.M{"username": username},
+        bson.D{
+            {"$set", bson.D{{"location", location}}},
+        },
+    )
     return err
 }
 
@@ -59,3 +75,4 @@ func AddEncounter(username string, pokemon spawn.Spawn, caught bool) error {
     )
     return err
 }
+

@@ -128,23 +128,30 @@ const wsOnClose = (refs: GameRefs) => () => {
 }
 
 interface Update {
+  type: string,
+  lat: number,
+  lng: number,
   spawn: Spawn[],
   despawn: Spawn[],
 }
 
 const wsOnMessage = (refs: GameRefs) => (event: MessageEvent) => {
   const update: Update = JSON.parse(event.data);
-  refs.pokemon.push(...update.spawn)
-  const newPokemon = refs.pokemon.filter((poke1 => {
-    let found = false;
-    update.despawn.forEach(poke2 => {
-      if (JSON.stringify(poke1) === JSON.stringify(poke2)) {
-        found = true;
-      }
-    });
-    return !found;
-  }));
-  refs.setPokemon(newPokemon);
+  if (update.type === "spawn") {
+    refs.pokemon.push(...update.spawn);
+    const newPokemon = refs.pokemon.filter((poke1 => {
+      let found = false;
+      update.despawn.forEach(poke2 => {
+        if (JSON.stringify(poke1) === JSON.stringify(poke2)) {
+          found = true;
+        }
+      });
+      return !found;
+    }));
+    refs.setPokemon(newPokemon);
+  } else if (update.type === "location" && refs.map !== undefined) {
+    refs.map.panTo({lat: update.lat, lng: update.lng});
+  }
 }
 
 const Map = compose(
