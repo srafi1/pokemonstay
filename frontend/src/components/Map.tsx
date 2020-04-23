@@ -116,6 +116,15 @@ const wsOnClose = (refs: GameRefs) => () => {
   if (refs.wsLoop !== undefined) {
     clearInterval(refs.wsLoop);
   }
+  refs.setPokemon([]);
+  const reconnect = () => {
+    console.log('Attempting reconnection');
+    refs.socket = new WebSocket(`ws://${window.location.host}/api/connect`);
+    refs.socket.onopen = wsOnOpen(refs);
+    refs.socket.onclose = wsOnClose(refs);
+    refs.socket.onmessage = wsOnMessage(refs);
+  }
+  setTimeout(reconnect, 1000);
 }
 
 interface Update {
