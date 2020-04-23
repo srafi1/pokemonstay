@@ -135,7 +135,14 @@ interface Update {
 
 const wsOnMessage = (refs: GameRefs) => (event: MessageEvent) => {
   const update: Update = JSON.parse(event.data);
-  if (update.type === "spawn") {
+  if (update.type === "init" && refs.map !== undefined) {
+    refs.map.panTo({lat: update.lat, lng: update.lng});
+    if (refs.wsLoop === undefined) {
+      // send location to server
+      sendUpdate(refs)();
+      refs.wsLoop = setInterval(sendUpdate(refs), 1000)
+    }
+  } else if (update.type === "spawn") {
     refs.pokemon.push(...update.spawn);
     const newPokemon = refs.pokemon.filter((poke1 => {
       let found = false;
@@ -147,13 +154,6 @@ const wsOnMessage = (refs: GameRefs) => (event: MessageEvent) => {
       return !found;
     }));
     refs.setPokemon(newPokemon);
-  } else if (update.type === "location" && refs.map !== undefined) {
-    refs.map.panTo({lat: update.lat, lng: update.lng});
-    if (refs.wsLoop === undefined) {
-      // send location to server
-      sendUpdate(refs)();
-      refs.wsLoop = setInterval(sendUpdate(refs), 1000)
-    }
   }
 }
 

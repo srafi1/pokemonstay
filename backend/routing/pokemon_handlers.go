@@ -65,7 +65,7 @@ func ServeWS(w http.ResponseWriter, r *http.Request) {
     } else {
         // send initial location
         update := &ServerUpdate{
-            Type: "location",
+            Type: "init",
             Lat: user.Location.Lat,
             Lng: user.Location.Lng,
         }
