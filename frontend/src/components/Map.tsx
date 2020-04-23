@@ -14,6 +14,7 @@ import GameMenu from './GameMenu';
 interface GameRefs {
   map: GoogleMap | undefined,
   setIsStanding: Function | undefined,
+  paused: boolean,
   updateLoop: NodeJS.Timeout | undefined,
   wsLoop: NodeJS.Timeout | undefined,
   socket: WebSocket,
@@ -83,7 +84,7 @@ const onKeyUp = (refs: GameRefs) => (event: KeyboardEvent) => {
 }
 
 const update = (refs: GameRefs) => () => {
-  if (refs.map) {
+  if (refs.map && !refs.paused) {
     const { x, y } = refs.movement;
     refs.map.panBy(x, y);
   }
@@ -148,6 +149,7 @@ const Map = compose(
     const refs: GameRefs = {
       map: undefined,
       setIsStanding: undefined,
+      paused: false,
       updateLoop: undefined,
       wsLoop: undefined,
       socket: new WebSocket(`ws://${window.location.host}/api/connect`),
