@@ -216,7 +216,6 @@ const Map = compose(
       },
       completeEncounter: () => (caught: boolean) => {
         refs.paused = false;
-        refs.setEncounter({active: false});
         console.log(`Caught pokemon: ${caught}`);
         console.log(`Pokemon: ${refs.encounter.pokemon.dex}`)
         const update = {
@@ -229,6 +228,7 @@ const Map = compose(
         const toRemove = JSON.stringify(refs.encounter.pokemon);
         const newPokemon = refs.pokemon.filter(poke => JSON.stringify(poke) !== toRemove);
         refs.setPokemon(newPokemon);
+        refs.setEncounter({active: false});
       },
       onUnmount: () => () => {
         if (!refs.map) {
