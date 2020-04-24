@@ -19,6 +19,7 @@ import profile from '../assets/profile.png';
 import pokedex from '../assets/pokedex.png';
 import help from '../assets/help.png';
 import logout from '../assets/logout.png';
+import HelpDialog from './HelpDialog';
 
 const MENU_ICON_SIZE = 80;
 const useStyles = makeStyles({
@@ -43,6 +44,7 @@ const useStyles = makeStyles({
 
 function GameMenu(props: any) {
   const [isOpen, setIsOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const styles = commonStyles();
   const menuStyles = useStyles();
   return (
@@ -68,19 +70,19 @@ function GameMenu(props: any) {
             <MenuComponent
               image={profile}
               text="Profile"
-              onClick={(e) => {props.history.push('/profile')}} />
+              onClick={() => props.history.push('/profile')} />
             <MenuComponent
               image={pokedex}
               text="Pokedex"
-              onClick={(e) => {props.history.push('/pokedex')}} />
+              onClick={() => props.history.push('/pokedex')} />
             <MenuComponent
               image={help}
               text="Help"
-              onClick={(e) => {console.log('click')}} />
+              onClick={() => setHelpOpen(true)} />
             <MenuComponent
               image={logout}
               text="Logout"
-              onClick={(e) => {props.history.push('/logout')}} />
+              onClick={() => props.history.push('/logout')} />
           </Box>
         </Box>
       </Fade>
@@ -103,8 +105,9 @@ function GameMenu(props: any) {
           }
         </Fab>
       </Box>
+      <HelpDialog open={helpOpen} close={() => setHelpOpen(false)} />
     </ThemeProvider>
-  )
+  );
 }
 
 export default withRouter(GameMenu);

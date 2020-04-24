@@ -252,7 +252,7 @@ const Map = compose(
       postRefs: () => (setIsOpen: Function, setMessage: Function) => {
         refs.setPostEncounter = setIsOpen;
         refs.setPostMessage = setMessage;
-      }
+      },
     }
   })
 )((props: any) => {
