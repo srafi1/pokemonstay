@@ -62,6 +62,8 @@ func ServeWS(w http.ResponseWriter, r *http.Request) {
     user, err := db.GetUser(username)
     if err != nil {
         log.Println(err)
+        w.WriteHeader(http.StatusInternalServerError)
+        return
     } else {
         // send initial location
         update := &ServerUpdate{
