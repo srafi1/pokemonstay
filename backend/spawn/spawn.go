@@ -10,7 +10,7 @@ var pokemonQueue []Spawn
 var userLocs map[string]Coords
 var spawnLock sync.RWMutex
 var userEncounters map[string]map[Spawn]bool
-var MAX_DEX = 807
+const MAX_DEX = 807
 
 type Coords struct {
     Lat float64 `json:"lat"`
@@ -28,6 +28,7 @@ func Init() {
     userLocs = make(map[string]Coords, 0)
     spawnLock = sync.RWMutex{}
     userEncounters = make(map[string]map[Spawn]bool)
+    initRarities()
     rand.Seed(time.Now().UnixNano())
     go func() {
         for {
@@ -47,7 +48,7 @@ func Init() {
                 for i:= 0; i < 10; i++ {
                     p := Spawn{
                         Coords: loc,
-                        Dex: (rand.Int() % MAX_DEX) + 1,
+                        Dex: randDex(),
                         Despawn: despawnTime,
                     }
                     p.Lat -= (rand.Float64() * 2 - 1) / 200
