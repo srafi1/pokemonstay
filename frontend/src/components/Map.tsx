@@ -113,6 +113,7 @@ const wsOnClose = (refs: GameRefs) => () => {
   console.log('Disconnected from server');
   if (refs.wsLoop !== undefined) {
     clearInterval(refs.wsLoop);
+    refs.wsLoop = undefined;
   }
   refs.setPokemon([]);
   const reconnect = () => {
