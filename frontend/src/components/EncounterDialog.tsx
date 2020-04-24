@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogTitle,
   ThemeProvider,
+  Typography,
 } from '@material-ui/core';
 import encounterBG from '../assets/encounter.png';
 import trainerImg from '../assets/trainer_back.png';
@@ -56,8 +57,8 @@ const update = (refs: EncounterRefs) => () => {
       refs.pokemon.dy *= -1;
       refs.pokemon.y += refs.pokemon.dy;
     }
-    refs.pokemon.dx += 0.5*Math.random()-0.25;
-    refs.pokemon.dy += 0.5*Math.random()-0.25;
+    refs.pokemon.dx += 0.6*Math.random()-0.3;
+    refs.pokemon.dy += 0.6*Math.random()-0.3;
     refs.pokemon.dx = Math.min(refs.pokemon.dx, 2);
     refs.pokemon.dy = Math.min(refs.pokemon.dy, 2);
     refs.pokemon.x += refs.pokemon.dx;
@@ -183,8 +184,8 @@ const withEncounterHandlers = withHandlers(() => {
         const rect = event.currentTarget.getBoundingClientRect();
         const mouseX = event.pageX - rect.x;
         const mouseY = event.pageY - rect.y;
-        refs.pokeball.dx = (mouseX - refs.pokeball.x) / 50;
-        refs.pokeball.dy = (mouseY - refs.pokeball.y) / 50;
+        refs.pokeball.dx = (mouseX - refs.pokeball.x) / 40;
+        refs.pokeball.dy = (mouseY - refs.pokeball.y) / 40;
         refs.numPokeballs--;
         refs.ballDest.x = mouseX;
         refs.ballDest.y = mouseY;
@@ -216,6 +217,9 @@ function EncounterDialog(props: any) {
               onClick={props.onClick}
               ref={props.onCanvasMount} /> : null
           }
+          <Typography variant="subtitle1" style={{textAlign: "center"}}>
+            Click to throw a pokeball.
+          </Typography>
         </DialogContent>
       </Dialog>
     </ThemeProvider>

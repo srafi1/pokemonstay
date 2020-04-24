@@ -11,6 +11,7 @@ import Loading from './Loading';
 import PlayerSprite from './PlayerSprite';
 import GameMenu from './GameMenu';
 import EncounterDialog from './EncounterDialog';
+import PostEncounterDialog from './PostEncounterDialog';
 
 interface GameRefs {
   map: GoogleMap | undefined,
@@ -26,6 +27,8 @@ interface GameRefs {
   setPokemon: Function,
   encounter: any,
   setEncounter: Function,
+  setPostEncounter: Function,
+  setPostMessage: Function,
 }
 
 interface Coords {
@@ -184,6 +187,8 @@ const Map = compose(
       setPokemon: () => {},
       encounter: {},
       setEncounter: () => {},
+      setPostEncounter: () => {},
+      setPostMessage: () => {},
     };
     refs.socket.onopen = wsOnOpen(refs);
     refs.socket.onclose = wsOnClose(refs);
@@ -217,8 +222,6 @@ const Map = compose(
       },
       completeEncounter: () => (caught: boolean) => {
         refs.paused = false;
-        console.log(`Caught pokemon: ${caught}`);
-        console.log(`Pokemon: ${refs.encounter.pokemon.dex}`)
         const update = {
           type: "encounter",
           caught: caught,
@@ -228,6 +231,12 @@ const Map = compose(
         // remove the pokemon marker
         const toRemove = JSON.stringify(refs.encounter.pokemon);
         const newPokemon = refs.pokemon.filter(poke => JSON.stringify(poke) !== toRemove);
+        if (caught) {
+          refs.setPostMessage('You caught the pokemon!');
+        } else {
+          refs.setPostMessage('The pokemon ran away!');
+        }
+        refs.setPostEncounter(true);
         refs.setPokemon(newPokemon);
         refs.setEncounter({active: false});
       },
@@ -239,6 +248,10 @@ const Map = compose(
             clearInterval(refs.updateLoop);
           }
         }
+      },
+      postRefs: () => (setIsOpen: Function, setMessage: Function) => {
+        refs.setPostEncounter = setIsOpen;
+        refs.setPostMessage = setMessage;
       }
     }
   })
@@ -271,10 +284,11 @@ const Map = compose(
         ))}
       </GoogleMap>
       <PlayerSprite onMount={props.onPlayerMounted} />
+      <GameMenu />
       <EncounterDialog
         encounter={encounter}
         complete={props.completeEncounter} />
-      <GameMenu />
+      <PostEncounterDialog setRefs={props.postRefs} />
     </div>
   )
 });
