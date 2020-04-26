@@ -16,6 +16,7 @@ function PostEncounterDialog(props: any) {
     <ThemeProvider theme={theme}>
       <Dialog
         open={isOpen}
+        onClose={() => setIsOpen(false)}
         PaperProps={{style: {backgroundColor: theme.palette.background.default}}}
         maxWidth={false}
         style={{textAlign: "center"}}>

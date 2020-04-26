@@ -76,7 +76,6 @@ const update = (refs: EncounterRefs) => () => {
           refs.pokemon.x,
           refs.pokemon.y
         );
-        console.log('dist', distToPokemon);
         if (distToPokemon < 50) {
           refs.caught(true);
         } else {

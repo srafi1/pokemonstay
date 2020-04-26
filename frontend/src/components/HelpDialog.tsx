@@ -17,6 +17,7 @@ function HelpDialog(props: any) {
         open={props.open}
         PaperProps={{style: {backgroundColor: theme.palette.background.default}}}
         maxWidth={false}
+        onClose={props.close}
         style={{textAlign: "center"}}>
         <DialogTitle>
           Help
@@ -28,7 +29,7 @@ function HelpDialog(props: any) {
             Click on a Pokemon to try to catch it. <br />
           </Typography>
           <Box mt={3}>
-            <Button variant="outlined" onClick={() => props.close()}>
+            <Button variant="outlined" onClick={props.close}>
             Close
             </Button>
           </Box>
