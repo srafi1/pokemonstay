@@ -4,8 +4,8 @@ import (
     "fmt"
     "log"
     "net/http"
-    "net/url"
-    "net/http/httputil"
+    _ "net/url"
+    _ "net/http/httputil"
 
     "github.com/srafi1/pokemonstay/backend/db"
     "github.com/srafi1/pokemonstay/backend/routing"
@@ -17,12 +17,14 @@ func main() {
     spawn.Init()
 
     // proxy to frontend (for development)
-    url, _ := url.Parse("http://localhost:3000")
-    proxy := httputil.NewSingleHostReverseProxy(url)
-    http.HandleFunc("/", proxy.ServeHTTP)
+    /*
+     *url, _ := url.Parse("http://localhost:3000")
+     *proxy := httputil.NewSingleHostReverseProxy(url)
+     *http.HandleFunc("/", proxy.ServeHTTP)
+     */
 
     // serve frontend (for production)
-    //http.HandleFunc("/", routing.StaticFrontend)
+    http.HandleFunc("/", routing.StaticFrontend)
 
     // auth routes
     http.HandleFunc("/api/login", routing.Login)
