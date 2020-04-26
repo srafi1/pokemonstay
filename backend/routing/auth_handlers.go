@@ -12,7 +12,7 @@ import (
     "github.com/srafi1/pokemonstay/backend/db"
 )
 
-var jwtKey string
+var jwtKey []byte
 
 type Credentials struct {
     Username string `json:"username"`
@@ -26,9 +26,11 @@ type Claims struct {
 }
 
 func Init() {
-    jwtKey = os.Getenv("JWT_KEY")
-    if jwtKey == "" {
+    jwtKeyEnv := os.Getenv("JWT_KEY")
+    if jwtKeyEnv == "" {
         log.Fatal("Missing JWT_KEY")
+    } else {
+        jwtKey = []byte(jwtKeyEnv)
     }
 }
 
