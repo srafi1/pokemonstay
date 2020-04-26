@@ -3,6 +3,7 @@ package routing
 import (
     "encoding/json"
     "net/http"
+    "os"
     "time"
 
     "golang.org/x/crypto/bcrypt"
@@ -10,8 +11,7 @@ import (
     "github.com/srafi1/pokemonstay/backend/db"
 )
 
-// TODO: use env for jwt key
-var jwtKey = []byte("super secrety")
+var jwtKey = os.Getenv("JWT_KEY")
 
 type Credentials struct {
     Username string `json:"username"`

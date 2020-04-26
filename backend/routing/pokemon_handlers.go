@@ -13,7 +13,6 @@ import (
 )
 
 var upgrader = websocket.Upgrader{}
-// TODO: use env for session key
 
 func GetSprite(w http.ResponseWriter, r *http.Request) {
 	dex, ok := r.URL.Query()["dex"]
