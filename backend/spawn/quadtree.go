@@ -152,7 +152,7 @@ func (q *QuadTree) GetSubtree(s Spawn) *QuadTree {
 func (q *QuadTree) Add(pokemon Spawn) {
     if !q.full {
         q.children = append(q.children, pokemon)
-        if len(q.children) > 3 {
+        if len(q.children) > 15 {
             q.full = true
             q.NW = NewNWQuadTree(q)
             q.NE = NewNEQuadTree(q)
