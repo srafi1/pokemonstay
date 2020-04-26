@@ -6,6 +6,7 @@ import (
     "net/http"
     _ "net/url"
     _ "net/http/httputil"
+    "os"
 
     "github.com/srafi1/pokemonstay/backend/db"
     "github.com/srafi1/pokemonstay/backend/routing"
@@ -15,6 +16,7 @@ import (
 func main() {
     db.ConnectDB()
     spawn.Init()
+    routing.Init()
 
     // proxy to frontend (for development)
     /*
@@ -39,6 +41,13 @@ func main() {
     http.HandleFunc("/api/connect", routing.ServeWS)
 
     port := 5000
+    portEnv := os.Getenv("PORT")
+    if portEnv != "" {
+        _, err := fmt.Sscanf(portEnv, "%d", &port)
+        if err != nil {
+            log.Fatal("Invalid PORT")
+        }
+    }
     fmt.Printf("Listening on port %d\n", port)
     log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }

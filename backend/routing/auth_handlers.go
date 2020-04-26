@@ -2,7 +2,9 @@ package routing
 
 import (
     "encoding/json"
+    "log"
     "net/http"
+    "os"
     "time"
 
     "golang.org/x/crypto/bcrypt"
@@ -10,8 +12,7 @@ import (
     "github.com/srafi1/pokemonstay/backend/db"
 )
 
-// TODO: use env for jwt key
-var jwtKey = []byte("super secrety")
+var jwtKey string
 
 type Credentials struct {
     Username string `json:"username"`
@@ -22,6 +23,13 @@ type Credentials struct {
 type Claims struct {
     Username string `json:"username"`
     jwt.StandardClaims
+}
+
+func Init() {
+    jwtKey = os.Getenv("JWT_KEY")
+    if jwtKey == "" {
+        log.Fatal("Missing JWT_KEY")
+    }
 }
 
 func createToken(username string) (*jwt.Token, time.Time) {
