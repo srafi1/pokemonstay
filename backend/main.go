@@ -15,6 +15,7 @@ import (
 func main() {
     db.ConnectDB()
     spawn.Init()
+    routing.Init()
 
     // proxy to frontend (for development)
     url, _ := url.Parse("http://localhost:3000")
