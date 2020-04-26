@@ -6,6 +6,7 @@ import (
     "net/http"
     "net/url"
     "net/http/httputil"
+    "os"
 
     "github.com/srafi1/pokemonstay/backend/db"
     "github.com/srafi1/pokemonstay/backend/routing"
@@ -38,6 +39,13 @@ func main() {
     http.HandleFunc("/api/connect", routing.ServeWS)
 
     port := 5000
+    portEnv := os.Getenv("PORT")
+    if portEnv != "" {
+        _, err := fmt.Sscanf(portEnv, "%d", &port)
+        if err != nil {
+            log.Fatal("Invalid PORT")
+        }
+    }
     fmt.Printf("Listening on port %d\n", port)
     log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
