@@ -41,7 +41,7 @@ func initRarities() {
             log.Fatal(err)
         }
         rarities[dex] = Pokemon{
-            Dex: dex,
+            Dex: dex + 1,
             Rarity: int(rarity),
         }
         dex++
@@ -59,5 +59,5 @@ func randDex() int {
         minChoice = choice + 1
         choice = (rand.Int() % (MAX_DEX - minChoice)) + minChoice
     }
-    return rarities[choice].Dex + 1
+    return rarities[choice].Dex
 }
