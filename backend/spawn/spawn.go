@@ -1,7 +1,6 @@
 package spawn
 
 import (
-    "math"
 	"math/rand"
 	"sync"
 	"time"
@@ -55,8 +54,11 @@ func Init() {
             toSpawn := make([]Spawn, 0)
 			for _, loc := range userLocs {
                 numLocal := len(GetSpawns(loc))
-                maxNew := int(math.Max(1, float64(MAX_IN_AREA - numLocal)))
-                numNew := rand.Int() % maxNew
+                maxNew := MAX_IN_AREA - numLocal
+                numNew := 0
+                if maxNew > 0 {
+                    numNew = rand.Int() % maxNew
+                }
 				pokemon := make([]Spawn, numNew)
 				for i := 0; i < numNew; i++ {
 					p := Spawn{
