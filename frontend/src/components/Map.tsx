@@ -121,7 +121,7 @@ const wsOnClose = (refs: GameRefs) => () => {
   refs.setPokemon([]);
   const reconnect = () => {
     console.log('Attempting reconnection');
-    refs.socket = new WebSocket(`ws://${window.location.host}/api/connect`);
+    refs.socket = new WebSocket(`wss://${window.location.host}/api/connect`);
     refs.socket.onopen = wsOnOpen(refs);
     refs.socket.onclose = wsOnClose(refs);
     refs.socket.onmessage = wsOnMessage(refs);
@@ -179,7 +179,7 @@ const Map = compose(
       paused: false,
       updateLoop: undefined,
       wsLoop: undefined,
-      socket: new WebSocket(`ws://${window.location.host}/api/connect`),
+      socket: new WebSocket(`wss://${window.location.host}/api/connect`),
       keyDownFunc: () => {},
       keyUpFunc: () => {},
       movement: { x: 0, y: 0 },
