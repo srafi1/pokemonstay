@@ -4,6 +4,7 @@ import (
     "context"
     "fmt"
     "log"
+    "os"
 
     "go.mongodb.org/mongo-driver/mongo"
     "go.mongodb.org/mongo-driver/mongo/options"
@@ -13,8 +14,13 @@ var client mongo.Client
 var userCollection *mongo.Collection
 
 func ConnectDB() {
-    // Set client options
-    clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+    var clientOptions *options.ClientOptions
+    uri := os.Getenv("MONGO_URI")
+    if uri == "" {
+        clientOptions = options.Client().ApplyURI("mongodb://localhost:27017")
+    } else {
+        clientOptions = options.Client().ApplyURI(uri)
+    }
 
     // Connect to MongoDB
     client, err := mongo.Connect(context.TODO(), clientOptions)
