@@ -21,7 +21,7 @@ type Pokemon struct {
 
 func initRarities() {
     rarities = make([]Pokemon, MAX_DEX)
-	f, err := os.Open("./spawn/capture_rate.csv")
+	f, err := os.Open("./data/capture_rate.csv")
 	if err != nil {
 		log.Fatal(err)
 	}
