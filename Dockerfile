@@ -10,10 +10,10 @@ RUN CGO_ENABLED=0 go build -o backend .
 FROM node:latest AS frontend
 WORKDIR /app
 COPY frontend/package.json .
-COPY frontend/package-lock.json .
-RUN npm i
+COPY frontend/yarn.lock .
+RUN yarn
 COPY frontend/ .
-RUN npm run build
+RUN yarn build
 
 FROM alpine:latest
 WORKDIR /app/backend
