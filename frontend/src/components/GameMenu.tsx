@@ -47,6 +47,11 @@ function GameMenu(props: any) {
   const [helpOpen, setHelpOpen] = useState(false);
   const styles = commonStyles();
   const menuStyles = useStyles();
+  const helpShown = localStorage.getItem('helpShown');
+  if (helpShown === null) {
+    setHelpOpen(true);
+    localStorage.setItem('helpShown', "yes");
+  }
   return (
     <ThemeProvider theme={theme}>
       <Fade in={isOpen}>
