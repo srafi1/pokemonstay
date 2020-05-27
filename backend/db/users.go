@@ -5,20 +5,15 @@ import (
 
     "golang.org/x/crypto/bcrypt"
     "go.mongodb.org/mongo-driver/bson"
+    "go.mongodb.org/mongo-driver/bson/primitive"
     "github.com/srafi1/pokemonstay/backend/spawn"
 )
 
-type Encounter struct {
-    spawn.Coords
-    Dex int
-    Caught bool
-}
-
 type User struct {
+    ID primitive.ObjectID `bson:"_id"`
     Username string
     HashedPassword string
     Location *spawn.Coords
-    Encounters []Encounter
 }
 
 func GetUser(username string) (User, error) {
@@ -43,7 +38,6 @@ func CreateUser(username string, password string) error {
             Lat: 40.76784,
             Lng: -73.963901,
         },
-        Encounters: make([]Encounter, 0),
     }
     _, err = userCollection.InsertOne(context.TODO(), user)
     return err
@@ -59,20 +53,3 @@ func SetLocation(username string, location spawn.Coords) error {
     )
     return err
 }
-
-func AddEncounter(username string, pokemon spawn.Spawn, caught bool) error {
-    encounter := Encounter{
-        pokemon.Coords,
-        pokemon.Dex,
-        caught,
-    }
-    _, err := userCollection.UpdateOne(
-        context.TODO(),
-        bson.M{"username": username},
-        bson.D{
-            {"$push", bson.D{{"encounters", encounter}}},
-        },
-    )
-    return err
-}
-
