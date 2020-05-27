@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Button, ThemeProvider, Typography } from '@material-ui/core';
+import { Box, ThemeProvider, Typography } from '@material-ui/core';
 import theme from '../common/theme';
-import { Link } from 'react-router-dom';
-import logo from '../assets/logo.png';
-import { commonStyles } from '../common/styles';
-import LargeProgress from './LargeProgress';
+import PokedexProgress from './PokedexProgress';
 
 function Pokedex() {
-  const styles = commonStyles();
   const [loaded, setLoaded] = useState(false);
   const [pokedex, setPokedex] = useState([{
     encountered: false,
@@ -38,35 +34,34 @@ function Pokedex() {
       <Box
         bgcolor="background.default"
         color="text.primary"
-        height={1}
         display="flex"
         flexDirection="column"
         alignItems="center"
         justifyContent="center">
-        <Typography variant="h3" color="error">
+        <Box pt={10}>
+          <Typography variant="h3" color="error">
           Pokedex
-        </Typography>
-        <Box p={2} display="flex" flexDirection="row">
-          <Box pr={2} display="flex" flexDirection="column" alignItems="center">
-            <Typography variant="h6">
-            Encountered:
-            </Typography>
-          <LargeProgress value={totalEnc} total={pokedex.length} />
-          </Box>
-          <Box display="flex" flexDirection="column" alignItems="center">
-            <Typography variant="h6">
-            Caught:
-            </Typography>
-          <LargeProgress value={totalCaught} total={pokedex.length} />
-          </Box>
+          </Typography>
         </Box>
-        <Button 
-          variant="contained" 
-          color="secondary" 
-          component={Link}
-          to="/login">
-          Get Started
-        </Button>
+
+        <PokedexProgress totalEnc={totalEnc} totalCaught={totalCaught} total={pokedex.length} />
+
+        <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center">
+          {
+            pokedex.map((pokemon, i) => (
+              <Box p={1} m={1} border="1px solid white" borderRadius={10}>
+                <img src={
+                  pokemon.caught ? `/api/sprite?dex=${i+1}` :
+                    pokemon.encountered ? `/api/sprite?dex=${i+1}&silhouette` :
+                    "/api/sprite?dex=0"
+                  } width={200} alt={`${i+1}`} />
+                <Typography variant="body1" align="center">
+                  {`${i+1}`}
+                </Typography>
+              </Box>
+            ))
+          }
+        </Box>
       </Box>
     </ThemeProvider>
   );

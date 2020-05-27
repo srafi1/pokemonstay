@@ -15,17 +15,17 @@ function LargeProgress(props: CircularProgressProps & {
       <CircularProgress
         color="primary"
         variant="static"
-        size={100}
+        size={200}
         value={100} />
       <CenteredBox>
         <CircularProgress
           color="secondary"
           variant="static"
-          size={100}
+          size={200}
           value={progress} />
       </CenteredBox>
       <CenteredBox>
-        <Typography variant="body1" component="div">
+        <Typography variant="h6">
           {props.value} / {props.total}
         </Typography>
       </CenteredBox>
