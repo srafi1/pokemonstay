@@ -28,7 +28,7 @@ interface GameRefs {
   encounter: any,
   setEncounter: Function,
   setPostEncounter: Function,
-  setPostMessage: Function,
+  setPostCaught: Function,
 }
 
 interface Coords {
@@ -188,7 +188,7 @@ const Map = compose(
       encounter: {},
       setEncounter: () => {},
       setPostEncounter: () => {},
-      setPostMessage: () => {},
+      setPostCaught: () => {},
     };
     refs.socket.onopen = wsOnOpen(refs);
     refs.socket.onclose = wsOnClose(refs);
@@ -231,11 +231,7 @@ const Map = compose(
         // remove the pokemon marker
         const toRemove = JSON.stringify(refs.encounter.pokemon);
         const newPokemon = refs.pokemon.filter(poke => JSON.stringify(poke) !== toRemove);
-        if (caught) {
-          refs.setPostMessage('You caught the pokemon!');
-        } else {
-          refs.setPostMessage('The pokemon ran away!');
-        }
+        refs.setPostCaught(caught);
         refs.setPostEncounter(true);
         refs.setPokemon(newPokemon);
         refs.setEncounter({active: false});
@@ -249,9 +245,9 @@ const Map = compose(
           }
         }
       },
-      postRefs: () => (setIsOpen: Function, setMessage: Function) => {
+      postRefs: () => (setIsOpen: Function, setCaught: Function) => {
         refs.setPostEncounter = setIsOpen;
-        refs.setPostMessage = setMessage;
+        refs.setPostCaught = setCaught;
       },
     }
   })

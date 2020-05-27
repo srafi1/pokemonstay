@@ -7,11 +7,12 @@ import {
   Typography
 } from '@material-ui/core';
 import theme from '../common/theme';
+import pokeball from '../assets/pokeball.png';
 
 function PostEncounterDialog(props: any) {
   const [isOpen, setIsOpen] = useState(false);
-  const [message, setMessage] = useState();
-  props.setRefs(setIsOpen, setMessage);
+  const [caught, setCaught] = useState(true);
+  props.setRefs(setIsOpen, setCaught);
   return (
     <ThemeProvider theme={theme}>
       <Dialog
@@ -22,8 +23,13 @@ function PostEncounterDialog(props: any) {
         style={{textAlign: "center"}}>
         <DialogContent>
           <Typography variant="h4">
-            {message}
+            {caught ? 'You caught the pokemon!' :
+            'The pokemon ran away!'}
           </Typography>
+          {caught &&
+            <img width={100} src={pokeball} alt="Pokeball" />
+          }
+          <br />
           <Button onClick={() => setIsOpen(false)}>
             Close
           </Button>
