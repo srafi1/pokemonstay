@@ -171,3 +171,31 @@ func ServeWS(w http.ResponseWriter, r *http.Request) {
     }
     spawn.RemoveUser(username)
 }
+
+func writeJSON(w http.ResponseWriter, data interface{}) {
+    response, err := json.Marshal(data)
+    if err != nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+    w.Header().Set("Content-Type", "application/json")
+    w.Write(response)
+}
+
+func GetPokedex(w http.ResponseWriter, r *http.Request) {
+    // check auth
+    err, claims := validAuth(w, r)
+    if err != nil {
+        log.Println(err)
+        return
+    }
+    username := claims.Username
+
+    user, err := db.GetUser(username)
+    if err != nil {
+        w.WriteHeader(http.StatusUnauthorized)
+        return
+    }
+
+    writeJSON(w, user.Pokedex)
+}

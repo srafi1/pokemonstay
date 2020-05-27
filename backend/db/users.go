@@ -15,8 +15,8 @@ type User struct {
     HashedPassword string
     Location       *spawn.Coords
     Pokedex [spawn.MAX_DEX]struct {
-        Encountered bool
-        Caught bool
+        Encountered bool `json:"encountered"`
+        Caught      bool `json:"caught"`
     }
 }
 
