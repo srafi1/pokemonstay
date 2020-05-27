@@ -20,8 +20,12 @@ func GetSprite(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	url := fmt.Sprintf("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/%s.png", dex[0])
-    http.Redirect(w, r, url, http.StatusMovedPermanently)
+    _, ok = r.URL.Query()["silhouette"]
+    if !ok {
+        http.ServeFile(w, r, fmt.Sprintf("data/sprites/default/%s.png", dex[0]))
+    } else {
+        http.ServeFile(w, r, fmt.Sprintf("data/sprites/silhouette/%s.png", dex[0]))
+    }
 }
 
 type ServerUpdate struct {
