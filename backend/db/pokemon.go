@@ -10,14 +10,14 @@ import (
 
 type Encounter struct {
     spawn.Coords
-    Dex int
+    Dex    int
     Caught bool
-    User primitive.ObjectID
+    User   primitive.ObjectID
 }
 
 type Pokemon struct {
     spawn.Coords
-    Dex int
+    Dex  int
     User primitive.ObjectID
 }
 

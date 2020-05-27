@@ -10,10 +10,10 @@ import (
 )
 
 type User struct {
-    ID primitive.ObjectID `bson:"_id,omitempty"`
-    Username string
+    ID             primitive.ObjectID `bson:"_id,omitempty"`
+    Username       string
     HashedPassword string
-    Location *spawn.Coords
+    Location       *spawn.Coords
     Pokedex [spawn.MAX_DEX]struct {
         Encountered bool
         Caught bool

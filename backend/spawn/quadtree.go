@@ -58,11 +58,11 @@ func (b1 *Bounds) Collides(b2 Bounds) bool {
 type QuadTree struct {
     *Bounds
     children []Spawn
-    NW *QuadTree
-    NE *QuadTree
-    SW *QuadTree
-    SE *QuadTree
-    full bool
+    NW       *QuadTree
+    NE       *QuadTree
+    SW       *QuadTree
+    SE       *QuadTree
+    full     bool
 }
 
 func NewQuadTree() *QuadTree {
