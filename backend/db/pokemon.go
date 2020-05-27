@@ -2,6 +2,7 @@ package db
 
 import (
     "context"
+    "fmt"
 
     "go.mongodb.org/mongo-driver/bson"
     "go.mongodb.org/mongo-driver/bson/primitive"
@@ -40,6 +41,18 @@ func AddEncounter(username string, pokemon spawn.Spawn, caught bool) error {
         return err
     }
 
+    filter = bson.M{"_id": user.ID}
+    update := bson.D{
+        {"$set", bson.D{{
+            fmt.Sprintf("pokedex.%d.encountered", pokemon.Dex),
+            true,
+        }}},
+    }
+    _, err = userCollection.UpdateOne(context.TODO(), filter, update)
+    if err != nil {
+        return err
+    }
+
     if caught {
         pokemon := Pokemon{
             pokemon.Coords,
@@ -47,6 +60,17 @@ func AddEncounter(username string, pokemon spawn.Spawn, caught bool) error {
             user.ID,
         }
         _, err = pokemonCollection.InsertOne(context.TODO(), pokemon)
+        if err != nil {
+            return err
+        }
+
+        update = bson.D{
+            {"$set", bson.D{{
+                fmt.Sprintf("pokedex.%d.caught", pokemon.Dex),
+                true,
+            }}},
+        }
+        _, err = userCollection.UpdateOne(context.TODO(), filter, update)
         if err != nil {
             return err
         }
