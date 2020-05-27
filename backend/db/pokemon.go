@@ -44,7 +44,7 @@ func AddEncounter(username string, pokemon spawn.Spawn, caught bool) error {
     filter = bson.M{"_id": user.ID}
     update := bson.D{
         {"$set", bson.D{{
-            fmt.Sprintf("pokedex.%d.encountered", pokemon.Dex),
+            fmt.Sprintf("pokedex.%d.encountered", pokemon.Dex-1),
             true,
         }}},
     }
@@ -66,7 +66,7 @@ func AddEncounter(username string, pokemon spawn.Spawn, caught bool) error {
 
         update = bson.D{
             {"$set", bson.D{{
-                fmt.Sprintf("pokedex.%d.caught", pokemon.Dex),
+                fmt.Sprintf("pokedex.%d.caught", pokemon.Dex-1),
                 true,
             }}},
         }
