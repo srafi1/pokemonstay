@@ -4,6 +4,7 @@ import theme from '../common/theme';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import { commonStyles } from '../common/styles';
+import LargeProgress from './LargeProgress';
 
 function Pokedex() {
   const styles = commonStyles();
@@ -42,16 +43,23 @@ function Pokedex() {
         flexDirection="column"
         alignItems="center"
         justifyContent="center">
-        <img src={logo} className={styles.logo} alt="Pokemon Stay" />
-        <Typography variant="h3">
-          pokedex page
+        <Typography variant="h3" color="error">
+          Pokedex
         </Typography>
-        <Typography variant="body1">
-          {totalEnc} / {pokedex.length} encountered
-        </Typography>
-        <Typography variant="body1">
-          {totalCaught} / {pokedex.length} caught
-        </Typography>
+        <Box p={2} display="flex" flexDirection="row">
+          <Box pr={2} display="flex" flexDirection="column" alignItems="center">
+            <Typography variant="h6">
+            Encountered:
+            </Typography>
+          <LargeProgress value={totalEnc} total={pokedex.length} />
+          </Box>
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <Typography variant="h6">
+            Caught:
+            </Typography>
+          <LargeProgress value={totalCaught} total={pokedex.length} />
+          </Box>
+        </Box>
         <Button 
           variant="contained" 
           color="secondary" 
