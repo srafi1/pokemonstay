@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { Box, ThemeProvider, Typography } from '@material-ui/core';
 import theme from '../common/theme';
-import PokedexProgress from './PokedexProgress';
 import Header from './Header';
+
+function capitalize(s: string):string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
 
 function Pokedex() {
   const [loaded, setLoaded] = useState(false);
   const [pokedex, setPokedex] = useState([{
     encountered: false,
     caught: false,
+    name: "",
   }]);
 
   if (!loaded) {
@@ -48,7 +52,7 @@ function Pokedex() {
                     "/api/sprite?dex=0"
                   } width={200} alt={`${i+1}`} />
                 <Typography variant="body1" align="center">
-                  {`${i+1}`}
+                  {`${i+1} ${capitalize(pokemon.name)}`}
                 </Typography>
               </Box>
             ))

@@ -10,6 +10,7 @@ import (
     "github.com/gorilla/websocket"
     "github.com/srafi1/pokemonstay/backend/db"
     "github.com/srafi1/pokemonstay/backend/spawn"
+    pokeapi "github.com/mtslzr/pokeapi-go"
 )
 
 var upgrader = websocket.Upgrader{}
@@ -186,6 +187,12 @@ func writeJSON(w http.ResponseWriter, data interface{}) {
     w.Write(response)
 }
 
+type Pokedex [spawn.MAX_DEX]struct {
+    Encountered bool   `json:"encountered"`
+    Caught      bool   `json:"caught"`
+    Name        string `json:"name"`
+}
+
 func GetPokedex(w http.ResponseWriter, r *http.Request) {
     // check auth
     err, claims := validAuth(w, r)
@@ -201,7 +208,26 @@ func GetPokedex(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    writeJSON(w, user.Pokedex)
+    var response Pokedex
+    for i, p := range user.Pokedex {
+        response[i].Encountered = p.Encountered
+        response[i].Caught = p.Caught
+        if p.Caught {
+            result, err := pokeapi.Pokemon(fmt.Sprintf("%d", i+1))
+            if err != nil {
+                w.WriteHeader(http.StatusInternalServerError)
+                return
+            }
+            response[i].Name = result.Name
+        }
+    }
+
+    writeJSON(w, response)
+}
+
+type Pokemon struct {
+    db.Pokemon
+    Name string `json:"name"`
 }
 
 func GetPokemon(w http.ResponseWriter, r *http.Request) {
@@ -219,5 +245,16 @@ func GetPokemon(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    writeJSON(w, pokemon)
+    response := make([]Pokemon, len(pokemon))
+    for i, p := range pokemon {
+        response[i].Pokemon = p
+        result, err := pokeapi.Pokemon(fmt.Sprintf("%d", p.Dex))
+        if err != nil {
+            w.WriteHeader(http.StatusInternalServerError)
+            return
+        }
+        response[i].Name = result.Name
+    }
+
+    writeJSON(w, response)
 }
