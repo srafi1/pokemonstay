@@ -1,24 +1,17 @@
 import React, { MouseEvent } from 'react';
 import { Box, Typography, makeStyles } from '@material-ui/core';
-
-const useStyles = makeStyles({
-  menuItem: {
-    cursor: 'pointer',
-    '&:hover': {
-      color: '#CCCCCC',
-    },
-  },
-})
+import { commonStyles } from '../common/styles';
 
 function MenuComponent(props: {
   image: string,
   text: string,
   onClick: (event: MouseEvent) => void,
 }) {
-  const styles = useStyles();
+  const styles = commonStyles();
   return (
     <Box
-      m={1}
+      m={0.5}
+      p={0.5}
       onClick={props.onClick}
       display="flex"
       flexDirection="row"

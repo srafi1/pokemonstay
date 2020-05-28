@@ -12,6 +12,8 @@ import (
 
 var client mongo.Client
 var userCollection *mongo.Collection
+var encounterCollection *mongo.Collection
+var pokemonCollection *mongo.Collection
 
 func ConnectDB() {
     var clientOptions *options.ClientOptions
@@ -36,7 +38,10 @@ func ConnectDB() {
         log.Fatal(err)
     }
 
-    userCollection = client.Database("pokemonstay").Collection("users")
+    database := client.Database("pokemonstay")
+    userCollection = database.Collection("users")
+    encounterCollection = database.Collection("encounters")
+    pokemonCollection = database.Collection("pokemon")
 
     fmt.Println("Connected to MongoDB!")
 }

@@ -13,6 +13,7 @@ import Logout from './components/Logout';
 import Map from './components/Map';
 import Register from './components/Register';
 import Profile from './components/Profile';
+import Pokemon from './components/Pokemon';
 import Pokedex from './components/Pokedex';
 
 const router = (
@@ -28,6 +29,8 @@ const router = (
       render={() => <Authenticated component={Map} />} />
     <Route exact path="/profile"
       render={() => <Authenticated component={Profile} />} />
+    <Route exact path="/pokemon"
+      render={() => <Authenticated component={Pokemon} />} />
     <Route exact path="/pokedex"
       render={() => <Authenticated component={Pokedex} />} />
   </Router>

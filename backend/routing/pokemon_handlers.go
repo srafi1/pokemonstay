@@ -10,6 +10,7 @@ import (
     "github.com/gorilla/websocket"
     "github.com/srafi1/pokemonstay/backend/db"
     "github.com/srafi1/pokemonstay/backend/spawn"
+    pokeapi "github.com/mtslzr/pokeapi-go"
 )
 
 var upgrader = websocket.Upgrader{}
@@ -20,8 +21,12 @@ func GetSprite(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	url := fmt.Sprintf("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/%s.png", dex[0])
-    http.Redirect(w, r, url, http.StatusMovedPermanently)
+    _, ok = r.URL.Query()["silhouette"]
+    if !ok {
+        http.ServeFile(w, r, fmt.Sprintf("data/sprites/default/%s.png", dex[0]))
+    } else {
+        http.ServeFile(w, r, fmt.Sprintf("data/sprites/silhouette/%s.png", dex[0]))
+    }
 }
 
 type ServerUpdate struct {
@@ -170,4 +175,86 @@ func ServeWS(w http.ResponseWriter, r *http.Request) {
         }
     }
     spawn.RemoveUser(username)
+}
+
+func writeJSON(w http.ResponseWriter, data interface{}) {
+    response, err := json.Marshal(data)
+    if err != nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+    w.Header().Set("Content-Type", "application/json")
+    w.Write(response)
+}
+
+type Pokedex [spawn.MAX_DEX]struct {
+    Encountered bool   `json:"encountered"`
+    Caught      bool   `json:"caught"`
+    Name        string `json:"name"`
+}
+
+func GetPokedex(w http.ResponseWriter, r *http.Request) {
+    // check auth
+    err, claims := validAuth(w, r)
+    if err != nil {
+        log.Println(err)
+        return
+    }
+    username := claims.Username
+
+    user, err := db.GetUser(username)
+    if err != nil {
+        w.WriteHeader(http.StatusUnauthorized)
+        return
+    }
+
+    var response Pokedex
+    for i, p := range user.Pokedex {
+        response[i].Encountered = p.Encountered
+        response[i].Caught = p.Caught
+        if p.Caught {
+            result, err := pokeapi.Pokemon(fmt.Sprintf("%d", i+1))
+            if err != nil {
+                w.WriteHeader(http.StatusInternalServerError)
+                return
+            }
+            response[i].Name = result.Name
+        }
+    }
+
+    writeJSON(w, response)
+}
+
+type Pokemon struct {
+    db.Pokemon
+    Name string `json:"name"`
+}
+
+func GetPokemon(w http.ResponseWriter, r *http.Request) {
+    // check auth
+    err, claims := validAuth(w, r)
+    if err != nil {
+        log.Println(err)
+        return
+    }
+    username := claims.Username
+
+    pokemon, err := db.GetPokemon(username)
+    if err != nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+
+    response := make([]Pokemon, len(pokemon))
+    for i, p := range pokemon {
+        response[i].Pokemon = p
+        result, err := pokeapi.Pokemon(fmt.Sprintf("%d", p.Dex))
+        if err != nil {
+            w.WriteHeader(http.StatusInternalServerError)
+            return
+        }
+        response[i].Name = result.Name
+    }
+
+    writeJSON(w, response)
 }

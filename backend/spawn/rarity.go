@@ -15,7 +15,7 @@ var rarities []Pokemon
 
 // lower rarity is more rare
 type Pokemon struct {
-    Dex int
+    Dex    int
     Rarity int
 }
 
