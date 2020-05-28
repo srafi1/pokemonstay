@@ -7,13 +7,12 @@ function Pokemon() {
   return (
     <ThemeProvider theme={theme}>
       <Box
+        minHeight={1}
         bgcolor="background.default"
         color="text.primary"
-        height={1}
         display="flex"
         flexDirection="column"
-        alignItems="center"
-        justifyContent="center">
+        alignItems="center">
         <Header page="Pokemon" />
       </Box>
     </ThemeProvider>

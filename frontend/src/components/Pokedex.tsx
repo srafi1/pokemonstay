@@ -27,26 +27,21 @@ function Pokedex() {
     });
   }
 
-  const totalEnc = pokedex.filter(a => a.encountered).length
-  const totalCaught = pokedex.filter(a => a.caught).length
-
   return (
     <ThemeProvider theme={theme}>
       <Box
+        minHeight={1}
         bgcolor="background.default"
         color="text.primary"
         display="flex"
         flexDirection="column"
-        alignItems="center"
-        justifyContent="center">
+        alignItems="center">
         <Header page="Pokedex" />
-
-        <PokedexProgress totalEnc={totalEnc} totalCaught={totalCaught} total={pokedex.length} />
 
         <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center">
           {
             pokedex.map((pokemon, i) => (
-              <Box p={1} m={1} border="1px solid white" borderRadius={10}>
+              <Box key={i} p={1} m={1} border="1px solid white" borderRadius={10}>
                 <img src={
                   pokemon.caught ? `/api/sprite?dex=${i+1}` :
                     pokemon.encountered ? `/api/sprite?dex=${i+1}&silhouette` :
