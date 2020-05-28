@@ -6,7 +6,7 @@ const PLAYER_HEIGHT = 60;
 export const commonStyles = makeStyles(() => createStyles({
   logo: {
     maxWidth: "80%",
-    width: 400,
+    width: 500,
   },
   childSpacing: {
     "& *": {
@@ -26,5 +26,11 @@ export const commonStyles = makeStyles(() => createStyles({
     marginLeft: PLAYER_WIDTH / -2,
     top: "50%",
     marginTop: PLAYER_HEIGHT / -2,
+  },
+  menuItem: {
+    cursor: 'pointer',
+    '&:hover': {
+      background: '#FFFFFF22',
+    },
   },
 }));

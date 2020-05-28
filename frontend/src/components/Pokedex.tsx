@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, ThemeProvider, Typography } from '@material-ui/core';
 import theme from '../common/theme';
 import PokedexProgress from './PokedexProgress';
+import Header from './Header';
 
 function Pokedex() {
   const [loaded, setLoaded] = useState(false);
@@ -38,11 +39,7 @@ function Pokedex() {
         flexDirection="column"
         alignItems="center"
         justifyContent="center">
-        <Box pt={10}>
-          <Typography variant="h3" color="error">
-          Pokedex
-          </Typography>
-        </Box>
+        <Header page="Pokedex" />
 
         <PokedexProgress totalEnc={totalEnc} totalCaught={totalCaught} total={pokedex.length} />
 

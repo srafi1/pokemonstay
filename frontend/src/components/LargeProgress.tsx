@@ -9,7 +9,6 @@ function LargeProgress(props: CircularProgressProps & {
   total: number,
 }) {
   const progress = Math.round(props.value / props.total * 100+1);
-  console.log(progress)
   return (
     <Box p={3} position="relative" display="flex">
       <CircularProgress
