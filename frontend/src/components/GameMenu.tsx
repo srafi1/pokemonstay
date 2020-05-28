@@ -14,8 +14,9 @@ import theme from '../common/theme';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import { commonStyles } from '../common/styles';
 import logo from '../assets/logo.png';
-import pokeballIcon from '../assets/pokeball_icon.svg';
+import menuOpenIcon from '../assets/pokeball_icon.svg';
 import profile from '../assets/profile.png';
+import pokeballIcon from '../assets/pokeball_icon.png';
 import pokedex from '../assets/pokedex.png';
 import help from '../assets/help.png';
 import logout from '../assets/logout.png';
@@ -77,6 +78,10 @@ function GameMenu(props: any) {
               text="Profile"
               onClick={() => props.history.push('/profile')} />
             <MenuComponent
+              image={pokeballIcon}
+              text="Pokemon"
+              onClick={() => props.history.push('/pokemon')} />
+            <MenuComponent
               image={pokedex}
               text="Pokedex"
               onClick={() => props.history.push('/pokedex')} />
@@ -103,7 +108,7 @@ function GameMenu(props: any) {
             <CloseIcon fontSize="large" /> :
             <Icon>
               <img
-                src={pokeballIcon}
+                src={menuOpenIcon}
                 alt="MENU"
                 className={menuStyles.svgIcon} />
             </Icon>

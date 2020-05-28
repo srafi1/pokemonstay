@@ -36,6 +36,8 @@ func main() {
 
     // pokemon routes
     http.HandleFunc("/api/sprite", routing.GetSprite)
+    http.HandleFunc("/api/pokedex", routing.GetPokedex)
+    http.HandleFunc("/api/pokemon", routing.GetPokemon)
 
     // websocket route
     http.HandleFunc("/api/connect", routing.ServeWS)
