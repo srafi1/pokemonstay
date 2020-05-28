@@ -203,3 +203,21 @@ func GetPokedex(w http.ResponseWriter, r *http.Request) {
 
     writeJSON(w, user.Pokedex)
 }
+
+func GetPokemon(w http.ResponseWriter, r *http.Request) {
+    // check auth
+    err, claims := validAuth(w, r)
+    if err != nil {
+        log.Println(err)
+        return
+    }
+    username := claims.Username
+
+    pokemon, err := db.GetPokemon(username)
+    if err != nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+
+    writeJSON(w, pokemon)
+}

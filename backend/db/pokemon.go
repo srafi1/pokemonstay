@@ -18,8 +18,8 @@ type Encounter struct {
 
 type Pokemon struct {
     spawn.Coords
-    Dex  int
-    User primitive.ObjectID
+    Dex  int                `json:"dex"`
+    User primitive.ObjectID `json:"-"`
 }
 
 func AddEncounter(username string, pokemon spawn.Spawn, caught bool) error {
@@ -77,4 +77,27 @@ func AddEncounter(username string, pokemon spawn.Spawn, caught bool) error {
     }
 
     return nil
+}
+
+func GetPokemon(username string) ([]Pokemon, error) {
+    var user User
+    filter := bson.M{"username": username}
+    err := userCollection.FindOne(context.TODO(), filter).Decode(&user)
+    if err != nil {
+        return nil, err
+    }
+
+    var pokemon []Pokemon
+    filter = bson.M{"user": user.ID}
+    cursor, err := pokemonCollection.Find(context.TODO(), filter)
+    if err != nil {
+        return nil, err
+    }
+
+    err = cursor.All(context.TODO(), &pokemon)
+    if err != nil {
+        return nil, err
+    }
+
+    return pokemon, nil
 }
