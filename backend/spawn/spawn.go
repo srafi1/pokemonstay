@@ -34,6 +34,7 @@ func Init() {
 	spawnLock = sync.RWMutex{}
 	userEncounters = make(map[string]map[Spawn]bool)
 	initRarities()
+	initPokemonNames()
 	rand.Seed(time.Now().UnixNano())
 
 	go func() {

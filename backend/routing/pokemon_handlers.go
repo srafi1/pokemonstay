@@ -10,7 +10,6 @@ import (
     "github.com/gorilla/websocket"
     "github.com/srafi1/pokemonstay/backend/db"
     "github.com/srafi1/pokemonstay/backend/spawn"
-    pokeapi "github.com/mtslzr/pokeapi-go"
 )
 
 var upgrader = websocket.Upgrader{}
@@ -213,12 +212,7 @@ func GetPokedex(w http.ResponseWriter, r *http.Request) {
         response[i].Encountered = p.Encountered
         response[i].Caught = p.Caught
         if p.Caught {
-            result, err := pokeapi.Pokemon(fmt.Sprintf("%d", i+1))
-            if err != nil {
-                w.WriteHeader(http.StatusInternalServerError)
-                return
-            }
-            response[i].Name = result.Name
+            response[i].Name = spawn.PokemonName(i+1)
         }
     }
 
@@ -248,12 +242,7 @@ func GetPokemon(w http.ResponseWriter, r *http.Request) {
     response := make([]Pokemon, len(pokemon))
     for i, p := range pokemon {
         response[i].Pokemon = p
-        result, err := pokeapi.Pokemon(fmt.Sprintf("%d", p.Dex))
-        if err != nil {
-            w.WriteHeader(http.StatusInternalServerError)
-            return
-        }
-        response[i].Name = result.Name
+        response[i].Name = spawn.PokemonName(p.Dex)
     }
 
     writeJSON(w, response)
