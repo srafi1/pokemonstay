@@ -48,18 +48,18 @@ func Init() {
 				cutoff++
 			}
 			pokemonQueue = pokemonQueue[cutoff:]
-            spawnLock.Unlock()
+			spawnLock.Unlock()
 
 			// spawn new pokemon per user
 			despawnTime := time.Now().Add(time.Minute)
-            toSpawn := make([]Spawn, 0)
+			toSpawn := make([]Spawn, 0)
 			for _, loc := range userLocs {
-                numLocal := len(GetSpawns(loc))
-                maxNew := MAX_IN_AREA - numLocal
-                numNew := 0
-                if maxNew > 0 {
-                    numNew = rand.Int() % maxNew
-                }
+				numLocal := len(GetSpawns(loc))
+				maxNew := MAX_IN_AREA - numLocal
+				numNew := 0
+				if maxNew > 0 {
+					numNew = rand.Int() % maxNew
+				}
 				pokemon := make([]Spawn, numNew)
 				for i := 0; i < numNew; i++ {
 					p := Spawn{
@@ -71,19 +71,19 @@ func Init() {
 					p.Lng -= (rand.Float64()*2 - 1) * SPAWN_RANGE
 					pokemon[i] = p
 				}
-                toSpawn = append(toSpawn, pokemon...)
+				toSpawn = append(toSpawn, pokemon...)
 			}
 
-            spawnLock.Lock()
-            pokemonQueue = append(pokemonQueue, toSpawn...)
-            for _, p := range toSpawn {
-                globalQuadTree.Add(p)
-            }
-            spawnLock.Unlock()
+			spawnLock.Lock()
+			pokemonQueue = append(pokemonQueue, toSpawn...)
+			for _, p := range toSpawn {
+				globalQuadTree.Add(p)
+			}
+			spawnLock.Unlock()
 
-            time.Sleep(10*time.Second)
-        }
-    }()
+			time.Sleep(10 * time.Second)
+		}
+	}()
 }
 
 func GetSpawns(c Coords) []Spawn {
