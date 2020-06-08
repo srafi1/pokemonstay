@@ -26,7 +26,7 @@ func main() {
 	 */
 
 	// serve frontend (for production)
-	//http.HandleFunc("/", routing.StaticFrontend)
+	http.HandleFunc("/", routing.StaticFrontend)
 
 	// auth routes
 	http.HandleFunc("/api/login", routing.Login)
