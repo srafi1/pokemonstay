@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/http/httputil"
-	"net/url"
+	_ "net/http/httputil"
+	_ "net/url"
 	"os"
 
 	"github.com/srafi1/pokemonstay/backend/db"
