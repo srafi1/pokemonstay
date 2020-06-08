@@ -1,13 +1,13 @@
 package db
 
 import (
-    "context"
-    "fmt"
-    "log"
-    "os"
+	"context"
+	"fmt"
+	"log"
+	"os"
 
-    "go.mongodb.org/mongo-driver/mongo"
-    "go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var client mongo.Client
@@ -16,32 +16,32 @@ var encounterCollection *mongo.Collection
 var pokemonCollection *mongo.Collection
 
 func ConnectDB() {
-    var clientOptions *options.ClientOptions
-    uri := os.Getenv("MONGO_URI")
-    if uri == "" {
-        clientOptions = options.Client().ApplyURI("mongodb://localhost:27017")
-    } else {
-        clientOptions = options.Client().ApplyURI(uri)
-    }
+	var clientOptions *options.ClientOptions
+	uri := os.Getenv("MONGO_URI")
+	if uri == "" {
+		clientOptions = options.Client().ApplyURI("mongodb://localhost:27017")
+	} else {
+		clientOptions = options.Client().ApplyURI(uri)
+	}
 
-    // Connect to MongoDB
-    client, err := mongo.Connect(context.TODO(), clientOptions)
+	// Connect to MongoDB
+	client, err := mongo.Connect(context.TODO(), clientOptions)
 
-    if err != nil {
-        log.Fatal(err)
-    }
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    // Check the connection
-    err = client.Ping(context.TODO(), nil)
+	// Check the connection
+	err = client.Ping(context.TODO(), nil)
 
-    if err != nil {
-        log.Fatal(err)
-    }
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    database := client.Database("pokemonstay")
-    userCollection = database.Collection("users")
-    encounterCollection = database.Collection("encounters")
-    pokemonCollection = database.Collection("pokemon")
+	database := client.Database("pokemonstay")
+	userCollection = database.Collection("users")
+	encounterCollection = database.Collection("encounters")
+	pokemonCollection = database.Collection("pokemon")
 
-    fmt.Println("Connected to MongoDB!")
+	fmt.Println("Connected to MongoDB!")
 }
