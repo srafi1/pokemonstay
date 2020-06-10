@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, ThemeProvider } from '@material-ui/core';
+import { Box, ThemeProvider, CircularProgress } from '@material-ui/core';
 import theme from '../common/theme';
 import Header from './Header';
 import PokedexProgress from './PokedexProgress';
@@ -40,10 +40,13 @@ function Profile() {
         flexDirection="column"
         alignItems="center">
         <Header page="Profile" />
-        <PokedexProgress
-          totalEnc={totalEnc}
-          totalCaught={totalCaught}
-          total={pokedex.length}/>
+        {loaded ? 
+          <PokedexProgress
+            totalEnc={totalEnc}
+            totalCaught={totalCaught}
+            total={pokedex.length}/> :
+              <CircularProgress />
+        }
       </Box>
     </ThemeProvider>
   );

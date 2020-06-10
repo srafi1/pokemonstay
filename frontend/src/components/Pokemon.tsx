@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import { Box, ThemeProvider, Typography } from '@material-ui/core';
+import { Box, ThemeProvider, CircularProgress } from '@material-ui/core';
 import theme from '../common/theme';
 import Header from './Header';
-
-function capitalize(s: string):string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
+import PokemonListing from './PokemonListing';
 
 function Pokemon() {
   const [loaded, setLoaded] = useState(false);
@@ -32,6 +29,16 @@ function Pokemon() {
     });
   }
 
+  const pokemonComponents = pokemon.map((pokemon, i) => (
+    <PokemonListing
+      key={i}
+      dex={pokemon.dex}
+      name={pokemon.name}
+      showDex={false}
+      hidden={false}
+      silhouette={false} />
+  ));
+
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -43,16 +50,7 @@ function Pokemon() {
         alignItems="center">
         <Header page="Pokemon" />
         <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center">
-          {
-            pokemon.map((p, i) => (
-              <Box key={i} p={1} m={1} border="1px solid white" borderRadius={10}>
-                <img src={`/api/sprite?dex=${p.dex}`} width={200} alt={`${p.dex+1}`} />
-                <Typography variant="body1" align="center">
-                  {capitalize(`${p.name}`)}
-                </Typography>
-              </Box>
-            ))
-          }
+          {loaded ? pokemonComponents : <CircularProgress />}
         </Box>
       </Box>
     </ThemeProvider>
