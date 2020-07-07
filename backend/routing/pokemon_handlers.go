@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	pokeapi "github.com/mtslzr/pokeapi-go"
 	"github.com/srafi1/pokemonstay/backend/db"
 	"github.com/srafi1/pokemonstay/backend/spawn"
 )
@@ -192,31 +193,61 @@ type Pokedex [spawn.MAX_DEX]struct {
 	Name        string `json:"name"`
 }
 
+type PokedexInfo struct {
+	Dex         int    `json:"dex"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
 func GetPokedex(w http.ResponseWriter, r *http.Request) {
-	// check auth
-	err, claims := validAuth(w, r)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	username := claims.Username
-
-	user, err := db.GetUser(username)
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
-	var response Pokedex
-	for i, p := range user.Pokedex {
-		response[i].Encountered = p.Encountered
-		response[i].Caught = p.Caught
-		if p.Caught {
-			response[i].Name = spawn.PokemonName(i + 1)
+	// check for individual pokemon
+	dex, ok := r.URL.Query()["dex"]
+	if ok {
+		info, err := pokeapi.PokemonSpecies(dex[0])
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
-	}
+		var desc string
+		for _, text := range info.FlavorTextEntries {
+			if text.Language.Name == "en" {
+				desc = text.FlavorText
+				break
+			}
+		}
+		pokemon := &PokedexInfo{
+			Dex:         info.ID,
+			Name:        info.Name,
+			Description: desc,
+		}
+		writeJSON(w, pokemon)
+	} else {
+		// return user's pokedex info
+		// check auth
+		err, claims := validAuth(w, r)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		username := claims.Username
 
-	writeJSON(w, response)
+		user, err := db.GetUser(username)
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		var response Pokedex
+		for i, p := range user.Pokedex {
+			response[i].Encountered = p.Encountered
+			response[i].Caught = p.Caught
+			if p.Caught {
+				response[i].Name = spawn.PokemonName(i + 1)
+			}
+		}
+
+		writeJSON(w, response)
+	}
 }
 
 type Pokemon struct {

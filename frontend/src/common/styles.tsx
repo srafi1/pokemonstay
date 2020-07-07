@@ -33,4 +33,7 @@ export const commonStyles = makeStyles(() => createStyles({
       background: '#FFFFFF22',
     },
   },
+  pointer: {
+    cursor: 'pointer',
+  },
 }));

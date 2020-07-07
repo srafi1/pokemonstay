@@ -1,5 +1,5 @@
 import React, { MouseEvent } from 'react';
-import { Box, Typography, makeStyles } from '@material-ui/core';
+import { Box, Typography } from '@material-ui/core';
 import { commonStyles } from '../common/styles';
 
 function MenuComponent(props: {
