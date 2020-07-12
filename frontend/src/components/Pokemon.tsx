@@ -3,9 +3,11 @@ import { Box, ThemeProvider, CircularProgress } from '@material-ui/core';
 import theme from '../common/theme';
 import Header from './Header';
 import PokemonListing from './PokemonListing';
+import PokedexDialog from './PokedexDialog';
 
 function Pokemon() {
   const [loaded, setLoaded] = useState(false);
+  const [dex, setDex] = useState(0);
   const [pokemon, setPokemon] = useState([{
     lat: 0,
     lng: 0,
@@ -36,7 +38,8 @@ function Pokemon() {
       name={pokemon.name}
       showDex={false}
       hidden={false}
-      silhouette={false} />
+      silhouette={false}
+      onClick={() => setDex(pokemon.dex)} />
   ));
 
   return (
@@ -52,6 +55,8 @@ function Pokemon() {
         <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center">
           {loaded ? pokemonComponents : <CircularProgress />}
         </Box>
+        
+        <PokedexDialog dex={dex} setDex={setDex} />
       </Box>
     </ThemeProvider>
   );

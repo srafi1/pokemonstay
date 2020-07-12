@@ -210,7 +210,6 @@ func GetPokedex(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		log.Println(pokemonInfo.Types)
 		types := make([]string, 1)
 		types[0] = pokemonInfo.Types[0].Type.Name
 		if len(pokemonInfo.Types) > 1 {
