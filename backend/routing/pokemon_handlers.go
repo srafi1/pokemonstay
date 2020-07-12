@@ -194,30 +194,39 @@ type Pokedex [spawn.MAX_DEX]struct {
 }
 
 type PokedexInfo struct {
-	Dex         int    `json:"dex"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	Dex         int      `json:"dex"`
+	Name        string   `json:"name"`
+	Type        []string `json:"types"`
+	Description string   `json:"description"`
 }
 
 func GetPokedex(w http.ResponseWriter, r *http.Request) {
 	// check for individual pokemon
 	dex, ok := r.URL.Query()["dex"]
 	if ok {
-		info, err := pokeapi.PokemonSpecies(dex[0])
-		if err != nil {
+		speciesInfo, err0 := pokeapi.PokemonSpecies(dex[0])
+		pokemonInfo, err1 := pokeapi.Pokemon(dex[0])
+		if err0 != nil || err1 != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		log.Println(pokemonInfo.Types)
+		types := make([]string, 1)
+		types[0] = pokemonInfo.Types[0].Type.Name
+		if len(pokemonInfo.Types) > 1 {
+			types = append(types, pokemonInfo.Types[1].Type.Name)
+		}
 		var desc string
-		for _, text := range info.FlavorTextEntries {
+		for _, text := range speciesInfo.FlavorTextEntries {
 			if text.Language.Name == "en" {
 				desc = text.FlavorText
 				break
 			}
 		}
 		pokemon := &PokedexInfo{
-			Dex:         info.ID,
-			Name:        info.Name,
+			Dex:         speciesInfo.ID,
+			Name:        speciesInfo.Name,
+			Type:        types,
 			Description: desc,
 		}
 		writeJSON(w, pokemon)
