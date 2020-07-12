@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"path"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -207,6 +208,18 @@ func GetPokedex(w http.ResponseWriter, r *http.Request) {
 		speciesInfo, err0 := pokeapi.PokemonSpecies(dex[0])
 		pokemonInfo, err1 := pokeapi.Pokemon(dex[0])
 		if err0 != nil || err1 != nil {
+			log.Printf("failed to retrieve pokedex info for: %s", dex[0])
+			log.Println(err0)
+			log.Println(err1)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		evolutionID := path.Base(speciesInfo.EvolutionChain.URL)
+		_, err2 := pokeapi.EvolutionChain(evolutionID)
+		if err2 != nil {
+			log.Printf("failed to retrieve evolution info for %s with evolution id %s", dex[0], evolutionID)
+			log.Println(err2)
+
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
