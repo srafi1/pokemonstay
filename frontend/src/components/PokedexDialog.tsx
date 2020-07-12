@@ -85,6 +85,7 @@ function PokedexDialog(props: {
       fetch(`/api/pokedex?dex=${props.dex}`)
       .then(res => res.json())
       .then(poke => {
+        poke.description = poke.description.replace("\u000c", " ");
         setPokemon(poke);
         setLoaded(true);
       });
