@@ -32,7 +32,8 @@ function EvolutionDialog(props: {
             No
           </Button>
           <Button onClick={() => {
-            props.history.go(0);
+            fetch(`/api/evolve?from=${props.fromDex}&to=${props.toDex}`)
+              .then(() => props.history.go(0))
           }}>
             Yes
           </Button>

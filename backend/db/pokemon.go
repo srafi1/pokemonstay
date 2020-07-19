@@ -138,5 +138,23 @@ func Evolve(username string, fromDex, toDex int) error {
 		}
 	}
 
+	// add to pokedex
+	update = bson.M{
+		"$set": bson.D{
+			{
+				fmt.Sprintf("pokedex.%d.caught", toDex-1),
+				true,
+			}, {
+				fmt.Sprintf("pokedex.%d.encountered", toDex-1),
+				true,
+			},
+		},
+	}
+	filter = bson.M{"_id": user.ID}
+	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		log.Println(err)
+	}
+
 	return nil
 }
