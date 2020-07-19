@@ -22,7 +22,9 @@ function Header(props: any) {
       <Box
         pb={3}
         display="flex"
-        flexDirection="row">
+        flexDirection="row"
+        justifyContent="center"
+        flexWrap="wrap">
         <NavItem
           text="Explore"
           to="/map"
