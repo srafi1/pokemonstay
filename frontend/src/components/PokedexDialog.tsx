@@ -21,6 +21,7 @@ import rock from '../assets/types/rock.png';
 import steel from '../assets/types/steel.png';
 import water from '../assets/types/water.png';
 import PokemonListing from './PokemonListing';
+import EvolutionDialog from './EvolutionDialog';
 
 function typeToImg(t: string):string {
   switch (t) {
@@ -85,6 +86,13 @@ function PokedexDialog(props: {
       name: "",
     }],
   });
+  const noEvolution = {
+    fromDex: 0,
+    fromName: "",
+    toDex: 0,
+    toName: "",
+  };
+  const [evolution, setEvolution] = useState(noEvolution);
 
   useEffect(() => {
     if (props.dex !== 0) {
@@ -101,6 +109,7 @@ function PokedexDialog(props: {
 
   const numPoke = props.userPokemon?.filter(p => p.dex === props.dex).length || 0;
   const hasThree = numPoke >= 3;
+  const showEvolutions = pokemon.evolutions.length !== 0;
 
   const evolutions = (
     <Grid item xs={12}>
@@ -108,11 +117,11 @@ function PokedexDialog(props: {
       <Typography variant="h5">
         Evolve into:
       </Typography>
-      {!hasThree && pokemon.evolutions.length !== 0 &&
+      {!hasThree && showEvolutions &&
         <Typography variant="h6">
           You need {3 - numPoke} more {capitalize(pokemon.name)} for an evolution
         </Typography>}
-      {pokemon.evolutions.length === 0 &&
+      {!showEvolutions &&
         <Typography variant="h6">None</Typography>}
       <Box display="flex" justifyContent="center">
         {pokemon.evolutions.map((p, i) => (
@@ -123,11 +132,17 @@ function PokedexDialog(props: {
             showDex={false}
             name={p.name}
             silhouette={!hasThree}
-            hidden={false} />
+            hidden={false}
+            onClick={hasThree ? () => setEvolution({
+              fromDex: pokemon.dex,
+              fromName: pokemon.name,
+              toDex: p.dex,
+              toName: p.name,
+            }) : undefined}/>
         ))}
       </Box>
     </Grid>
-  )
+  );
 
   return (
     <ThemeProvider theme={theme}>
@@ -182,6 +197,7 @@ function PokedexDialog(props: {
           }
         </DialogContent>
       </Dialog>
+      <EvolutionDialog close={() => setEvolution(noEvolution)} {...evolution} />
     </ThemeProvider>
   );
 }
