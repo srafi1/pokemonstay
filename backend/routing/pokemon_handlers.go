@@ -199,6 +199,7 @@ type PokedexInfo struct {
 	Name        string   `json:"name"`
 	Type        []string `json:"types"`
 	Description string   `json:"description"`
+	Evolutions  []int    `json:"evolutions"`
 }
 
 func GetPokedex(w http.ResponseWriter, r *http.Request) {
@@ -215,13 +216,34 @@ func GetPokedex(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		evolutionID := path.Base(speciesInfo.EvolutionChain.URL)
-		_, err2 := pokeapi.EvolutionChain(evolutionID)
+		chain, err2 := pokeapi.EvolutionChain(evolutionID)
 		if err2 != nil {
 			log.Printf("failed to retrieve evolution info for %s with evolution id %s", dex[0], evolutionID)
 			log.Println(err2)
 
 			w.WriteHeader(http.StatusInternalServerError)
 			return
+		}
+		evolutions := make([]int, 0)
+		if speciesInfo.Name == chain.Chain.Species.Name {
+			for _, p := range chain.Chain.EvolvesTo {
+				e, err := pokeapi.Pokemon(p.Species.Name)
+				if err == nil {
+					evolutions = append(evolutions, e.ID)
+				}
+			}
+		} else {
+			for _, p := range chain.Chain.EvolvesTo {
+				if speciesInfo.Name == p.Species.Name {
+					for _, p2 := range p.EvolvesTo {
+						e, err := pokeapi.Pokemon(p2.Species.Name)
+						if err == nil {
+							evolutions = append(evolutions, e.ID)
+						}
+					}
+					break
+				}
+			}
 		}
 		types := make([]string, 1)
 		types[0] = pokemonInfo.Types[0].Type.Name
@@ -240,6 +262,7 @@ func GetPokedex(w http.ResponseWriter, r *http.Request) {
 			Name:        speciesInfo.Name,
 			Type:        types,
 			Description: desc,
+			Evolutions:  evolutions,
 		}
 		writeJSON(w, pokemon)
 	} else {

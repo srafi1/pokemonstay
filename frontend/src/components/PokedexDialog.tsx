@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import theme from '../common/theme';
-import { ThemeProvider, Dialog, DialogContent, Typography, CircularProgress, Box, Grid, Divider } from '@material-ui/core';
-import arrow from '../assets/arrow_right.png';
+import { ThemeProvider, Dialog, DialogContent, Typography, CircularProgress, Box, Grid } from '@material-ui/core';
 
 import bug from '../assets/types/bug.png';
 import dark from '../assets/types/dark.png';
@@ -79,6 +78,7 @@ function PokedexDialog(props: {
     name: "",
     types: [""],
     description: "",
+    evolutions: [0],
   });
 
   useEffect(() => {
@@ -106,19 +106,18 @@ function PokedexDialog(props: {
         <DialogContent>
           {!loaded ? <CircularProgress /> :
           <Box width={400}>
-            <Grid container spacing={2}>
+            <Grid container>
               <Grid item xs={12}>
                 <Typography variant="h4">
                   #{pokemon.dex}: {capitalize(pokemon.name)}
                 </Typography>
               </Grid>
-              <Grid container item xs={12}>
+              <Grid container xs={12}>
                 <Grid item xs={8}>
                   <img alt="sprite" width={200} src={`/api/sprite?dex=${pokemon.dex}`} />
                 </Grid>
                 <Grid
                   container
-                  item
                   xs={4}
                   spacing={2}
                   direction="column"
@@ -128,32 +127,17 @@ function PokedexDialog(props: {
                     <Typography variant="h6">Type(s):</Typography>
                   </Grid>
                   <Grid container justify="center">
-                    {pokemon.types.map((t, i) => (
-                      <Grid key={i} item xs={6}>
+                    {pokemon.types.map(t => (
+                      <Grid item xs={6}>
                         <img src={typeToImg(t)} width={50} />
                       </Grid>
                     ))}
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid item xs={12}>
-                <Box border="1px solid white" borderRadius={5}>
-                  <Typography variant="h6">
-                  {pokemon.description}
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid container spacing={1} alignItems="center" justify="center">
-                <Grid item xs="auto">
-                  <img width={100} src={`/api/sprite?dex=${pokemon.dex}`} />
-                </Grid>
-                <Grid item xs="auto">
-                  <img width={20} src={arrow} />
-                </Grid>
-                <Grid item xs="auto">
-                  <img width={100} src={`/api/sprite?dex=${pokemon.dex}`} />
-                </Grid>
-              </Grid>
+              <Typography variant="h6">
+                {pokemon.description}
+              </Typography>
             </Grid>
           </Box>
           }
