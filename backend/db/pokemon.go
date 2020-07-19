@@ -3,10 +3,12 @@ package db
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/srafi1/pokemonstay/backend/spawn"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Encounter struct {
@@ -18,14 +20,13 @@ type Encounter struct {
 
 type Pokemon struct {
 	spawn.Coords
+	ID   primitive.ObjectID `bson:"_id,omitempty"`
 	Dex  int                `json:"dex"`
 	User primitive.ObjectID `json:"-"`
 }
 
 func AddEncounter(username string, pokemon spawn.Spawn, caught bool) error {
-	var user User
-	filter := bson.M{"username": username}
-	err := userCollection.FindOne(context.TODO(), filter).Decode(&user)
+	user, err := GetUser(username)
 	if err != nil {
 		return err
 	}
@@ -41,7 +42,7 @@ func AddEncounter(username string, pokemon spawn.Spawn, caught bool) error {
 		return err
 	}
 
-	filter = bson.M{"_id": user.ID}
+	filter := bson.M{"_id": user.ID}
 	update := bson.D{
 		{"$set", bson.D{{
 			fmt.Sprintf("pokedex.%d.encountered", pokemon.Dex-1),
@@ -55,9 +56,9 @@ func AddEncounter(username string, pokemon spawn.Spawn, caught bool) error {
 
 	if caught {
 		pokemon := Pokemon{
-			pokemon.Coords,
-			pokemon.Dex,
-			user.ID,
+			Coords: pokemon.Coords,
+			Dex:    pokemon.Dex,
+			User:   user.ID,
 		}
 		_, err = pokemonCollection.InsertOne(context.TODO(), pokemon)
 		if err != nil {
@@ -80,15 +81,13 @@ func AddEncounter(username string, pokemon spawn.Spawn, caught bool) error {
 }
 
 func GetPokemon(username string) ([]Pokemon, error) {
-	var user User
-	filter := bson.M{"username": username}
-	err := userCollection.FindOne(context.TODO(), filter).Decode(&user)
+	user, err := GetUser(username)
 	if err != nil {
 		return nil, err
 	}
 
 	var pokemon []Pokemon
-	filter = bson.M{"user": user.ID}
+	filter := bson.M{"user": user.ID}
 	cursor, err := pokemonCollection.Find(context.TODO(), filter)
 	if err != nil {
 		return nil, err
@@ -100,4 +99,62 @@ func GetPokemon(username string) ([]Pokemon, error) {
 	}
 
 	return pokemon, nil
+}
+
+func Evolve(username string, fromDex, toDex int) error {
+	user, err := GetUser(username)
+	if err != nil {
+		return err
+	}
+
+	limit := options.Find()
+	limit.SetLimit(3)
+	filter := bson.M{"user": user.ID, "dex": fromDex}
+	cursor, err := pokemonCollection.Find(context.TODO(), filter, limit)
+	if err != nil {
+		return err
+	}
+
+	var pokemon []Pokemon
+	err = cursor.All(context.TODO(), &pokemon)
+	if err != nil {
+		return err
+	}
+
+	// modify first one to be evolved
+	update := bson.M{"$set": bson.M{"dex": toDex}}
+	filter = bson.M{"_id": pokemon[0].ID}
+	_, err = pokemonCollection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return err
+	}
+
+	// delete last two
+	for _, p := range pokemon[1:] {
+		filter = bson.M{"_id": p.ID}
+		_, err = pokemonCollection.DeleteOne(context.TODO(), filter)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+
+	// add to pokedex
+	update = bson.M{
+		"$set": bson.D{
+			{
+				fmt.Sprintf("pokedex.%d.caught", toDex-1),
+				true,
+			}, {
+				fmt.Sprintf("pokedex.%d.encountered", toDex-1),
+				true,
+			},
+		},
+	}
+	filter = bson.M{"_id": user.ID}
+	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		log.Println(err)
+	}
+
+	return nil
 }
