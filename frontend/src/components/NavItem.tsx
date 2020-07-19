@@ -10,8 +10,9 @@ function NavItem(props: any) {
     <Link component={RouterLink} to={props.to}>
       <Box
         className={styles.menuItem}
-        m={1}
         p={1}
+        ml={1}
+        mr={1}
         textAlign="center">
         <Typography variant="button" display="block" color={color}>
           {props.text}
