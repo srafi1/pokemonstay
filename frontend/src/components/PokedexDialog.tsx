@@ -112,11 +112,12 @@ function PokedexDialog(props: {
                   #{pokemon.dex}: {capitalize(pokemon.name)}
                 </Typography>
               </Grid>
-              <Grid container xs={12}>
+              <Grid item container xs={12}>
                 <Grid item xs={8}>
                   <img alt="sprite" width={200} src={`/api/sprite?dex=${pokemon.dex}`} />
                 </Grid>
                 <Grid
+                  item
                   container
                   xs={4}
                   spacing={2}
@@ -127,17 +128,19 @@ function PokedexDialog(props: {
                     <Typography variant="h6">Type(s):</Typography>
                   </Grid>
                   <Grid container justify="center">
-                    {pokemon.types.map(t => (
-                      <Grid item xs={6}>
+                    {pokemon.types.map((t, i) => (
+                      <Grid key={i} item xs={6}>
                         <img src={typeToImg(t)} width={50} />
                       </Grid>
                     ))}
                   </Grid>
                 </Grid>
               </Grid>
-              <Typography variant="h6">
-                {pokemon.description}
-              </Typography>
+              <Grid item xs={12}>
+                <Typography variant="h6">
+                  {pokemon.description}
+                </Typography>
+              </Grid>
             </Grid>
           </Box>
           }
