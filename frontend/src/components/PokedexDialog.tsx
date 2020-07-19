@@ -20,6 +20,7 @@ import psychic from '../assets/types/psychic.png';
 import rock from '../assets/types/rock.png';
 import steel from '../assets/types/steel.png';
 import water from '../assets/types/water.png';
+import PokemonListing from './PokemonListing';
 
 function typeToImg(t: string):string {
   switch (t) {
@@ -71,6 +72,7 @@ function capitalize(s: string):string {
 function PokedexDialog(props: {
   dex: number,
   setDex: Function,
+  userPokemon?: {dex: Number, name: string}[],
 }) {
   const [loaded, setLoaded] = useState(false);
   const [pokemon, setPokemon] = useState({
@@ -78,7 +80,10 @@ function PokedexDialog(props: {
     name: "",
     types: [""],
     description: "",
-    evolutions: [0],
+    evolutions: [{
+      dex: 0,
+      name: "",
+    }],
   });
 
   useEffect(() => {
@@ -93,6 +98,36 @@ function PokedexDialog(props: {
     }
     return () => setLoaded(false);
   }, [props.dex])
+
+  const numPoke = props.userPokemon?.filter(p => p.dex === props.dex).length || 0;
+  const hasThree = numPoke >= 3;
+
+  const evolutions = (
+    <Grid item xs={12}>
+      <Box m={1} borderTop="1px solid white" />
+      <Typography variant="h5">
+        Evolve into:
+      </Typography>
+      {!hasThree && pokemon.evolutions.length !== 0 &&
+        <Typography variant="h6">
+          You need {3 - numPoke} more {capitalize(pokemon.name)} for an evolution
+        </Typography>}
+      {pokemon.evolutions.length === 0 &&
+        <Typography variant="h6">None</Typography>}
+      <Box display="flex" justifyContent="center">
+        {pokemon.evolutions.map((p, i) => (
+          <PokemonListing
+            key={i}
+            imgSize={100}
+            dex={p.dex}
+            showDex={false}
+            name={p.name}
+            silhouette={!hasThree}
+            hidden={false} />
+        ))}
+      </Box>
+    </Grid>
+  )
 
   return (
     <ThemeProvider theme={theme}>
@@ -141,6 +176,7 @@ function PokedexDialog(props: {
                   {pokemon.description}
                 </Typography>
               </Grid>
+              {props.userPokemon !== undefined && evolutions}
             </Grid>
           </Box>
           }

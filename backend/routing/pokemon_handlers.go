@@ -194,12 +194,17 @@ type Pokedex [spawn.MAX_DEX]struct {
 	Name        string `json:"name"`
 }
 
+type DexName struct {
+	Dex  int    `json:"dex"`
+	Name string `json:"name"`
+}
+
 type PokedexInfo struct {
-	Dex         int      `json:"dex"`
-	Name        string   `json:"name"`
-	Type        []string `json:"types"`
-	Description string   `json:"description"`
-	Evolutions  []int    `json:"evolutions"`
+	Dex         int       `json:"dex"`
+	Name        string    `json:"name"`
+	Type        []string  `json:"types"`
+	Description string    `json:"description"`
+	Evolutions  []DexName `json:"evolutions"`
 }
 
 func GetPokedex(w http.ResponseWriter, r *http.Request) {
@@ -224,12 +229,12 @@ func GetPokedex(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		evolutions := make([]int, 0)
+		evolutions := make([]DexName, 0)
 		if speciesInfo.Name == chain.Chain.Species.Name {
 			for _, p := range chain.Chain.EvolvesTo {
 				e, err := pokeapi.Pokemon(p.Species.Name)
 				if err == nil {
-					evolutions = append(evolutions, e.ID)
+					evolutions = append(evolutions, DexName{e.ID, e.Name})
 				}
 			}
 		} else {
@@ -238,7 +243,7 @@ func GetPokedex(w http.ResponseWriter, r *http.Request) {
 					for _, p2 := range p.EvolvesTo {
 						e, err := pokeapi.Pokemon(p2.Species.Name)
 						if err == nil {
-							evolutions = append(evolutions, e.ID)
+							evolutions = append(evolutions, DexName{e.ID, e.Name})
 						}
 					}
 					break

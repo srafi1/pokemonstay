@@ -56,7 +56,7 @@ function Pokemon() {
           {loaded ? pokemonComponents : <CircularProgress />}
         </Box>
         
-        <PokedexDialog dex={dex} setDex={setDex} />
+        <PokedexDialog dex={dex} setDex={setDex} userPokemon={pokemon} />
       </Box>
     </ThemeProvider>
   );
