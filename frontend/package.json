@@ -16,6 +16,7 @@
     "@types/react-router-dom": "^5.1.4",
     "@types/recompose": "^0.30.7",
     "js-cookie": "^2.2.1",
+    "node-fetch": "^2.6.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-google-maps": "^9.4.5",
