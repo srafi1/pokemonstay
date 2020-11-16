@@ -12,6 +12,7 @@ function PokemonListing(props: {
   silhouette: boolean,
   hidden: boolean,
   name: string,
+  highlight?: boolean,
   imgSize?: number,
   onClick?: (event: React.MouseEvent) => void,
 }) {
@@ -33,10 +34,10 @@ function PokemonListing(props: {
       onClick={props.onClick}
       borderRadius={10}>
       <img src={imgSrc} width={props.imgSize || 200} alt="0" />
-        <Typography variant="body1" align="center">
+      <Typography variant="body1" align="center" color={props.highlight ? "error" : "inherit"}>
         {props.showDex && `${props.dex} `}
         {capitalize(`${props.name}`)}
-        </Typography>
+      </Typography>
     </Box>
   );
 }
