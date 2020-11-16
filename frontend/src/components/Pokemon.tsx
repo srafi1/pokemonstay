@@ -31,6 +31,16 @@ function Pokemon() {
     });
   }
 
+  const pokemonCounts: { [dex:number]: number } = {};
+  for (let i in pokemon) {
+    const p = pokemon[i];
+    if (p.dex in pokemonCounts) {
+      pokemonCounts[p.dex]++;
+    } else {
+      pokemonCounts[p.dex] = 1;
+    }
+  }
+
   const pokemonComponents = pokemon.map((pokemon, i) => (
     <PokemonListing
       key={i}
@@ -39,6 +49,7 @@ function Pokemon() {
       showDex={false}
       hidden={false}
       silhouette={false}
+      highlight={pokemonCounts[pokemon.dex] >= 3}
       onClick={() => setDex(pokemon.dex)} />
   ));
 
