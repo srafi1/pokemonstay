@@ -40,7 +40,7 @@ const registerSubmit = (
     })
     .then(((res: Response) => {
       if (res.status !== 200) {
-        setErrorMsg('Failed to register');
+        res.text().then(msg => setErrorMsg(msg))
       } else {
         history.push('/map');
       }

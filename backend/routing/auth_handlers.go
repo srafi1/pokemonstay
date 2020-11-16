@@ -97,8 +97,13 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err = db.GetUser(creds.Username)
-	if err == nil || creds.Password != creds.ConfirmPassword {
+	if err == nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("That username is taken"))
+		return
+	} else if creds.Password != creds.ConfirmPassword {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Passwords must match"))
 		return
 	}
 
