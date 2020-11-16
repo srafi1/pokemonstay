@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { Route, BrowserRouter as Router } from 'react-router-dom';
+import { Redirect, Route, BrowserRouter as Router } from 'react-router-dom';
 import 'typeface-roboto';
 import './index.css';
 
@@ -33,6 +33,9 @@ const router = (
       render={() => <Authenticated component={Pokemon} />} />
     <Route exact path="/pokedex"
       render={() => <Authenticated component={Pokedex} />} />
+
+    <Route path="/*"
+      render={() => <Redirect to="/" />} />
   </Router>
 )
 
