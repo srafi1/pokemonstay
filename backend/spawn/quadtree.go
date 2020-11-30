@@ -1,7 +1,7 @@
 package spawn
 
 import (
-	"log"
+	"fmt"
 	"reflect"
 )
 
@@ -130,23 +130,14 @@ func NewSEQuadTree(parent *QuadTree) *QuadTree {
 	}
 }
 
-func (q *QuadTree) GetSubtree(s Spawn) *QuadTree {
-	if q.NW.InRange(s.Coords) {
-		return q.NW
-	} else if q.NE.InRange(s.Coords) {
-		return q.NE
-	} else if q.SW.InRange(s.Coords) {
-		return q.SW
-	} else if q.SE.InRange(s.Coords) {
-		return q.SE
-	} else {
-		log.Println("nil subtree for", q.Bounds, s)
-		log.Println(q.NW.Bounds, q.NW.InRange(s.Coords))
-		log.Println(q.NE.Bounds, q.NE.InRange(s.Coords))
-		log.Println(q.SW.Bounds, q.SW.InRange(s.Coords))
-		log.Println(q.SE.Bounds, q.SE.InRange(s.Coords))
-		return nil
+func (q *QuadTree) GetSubtree(c Coords) *QuadTree {
+	regions := []*QuadTree{q.NW, q.NE, q.SW, q.SE}
+	for _, region := range regions {
+		if region.InRange(c) {
+			return region
+		}
 	}
+	panic(fmt.Sprintf("nil subtree for %v in %v", c, q.Bounds))
 }
 
 func (q *QuadTree) Add(pokemon Spawn) {
@@ -159,13 +150,13 @@ func (q *QuadTree) Add(pokemon Spawn) {
 			q.SW = NewSWQuadTree(q)
 			q.SE = NewSEQuadTree(q)
 			for _, s := range q.children {
-				sub := q.GetSubtree(s)
+				sub := q.GetSubtree(s.Coords)
 				sub.Add(s)
 			}
 			q.children = make([]Spawn, 0)
 		}
 	} else {
-		sub := q.GetSubtree(pokemon)
+		sub := q.GetSubtree(pokemon.Coords)
 		sub.Add(pokemon)
 	}
 }
@@ -173,7 +164,7 @@ func (q *QuadTree) Add(pokemon Spawn) {
 func (q *QuadTree) Remove(pokemon Spawn) {
 	if q.full {
 		// is not a leaf
-		sub := q.GetSubtree(pokemon)
+		sub := q.GetSubtree(pokemon.Coords)
 		sub.Remove(pokemon)
 	} else {
 		// is leaf, ie: has the element to be removed
