@@ -43,11 +43,10 @@ func AddEncounter(username string, pokemon spawn.Spawn, caught bool) error {
 	}
 
 	filter := bson.M{"_id": user.ID}
-	update := bson.D{
-		{"$set", bson.D{{
-			fmt.Sprintf("pokedex.%d.encountered", pokemon.Dex-1),
-			true,
-		}}},
+	update := bson.M{
+		"$set": bson.M{
+			fmt.Sprintf("pokedex.%d.encountered", pokemon.Dex-1): true,
+		},
 	}
 	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
@@ -65,11 +64,10 @@ func AddEncounter(username string, pokemon spawn.Spawn, caught bool) error {
 			return err
 		}
 
-		update = bson.D{
-			{"$set", bson.D{{
-				fmt.Sprintf("pokedex.%d.caught", pokemon.Dex-1),
-				true,
-			}}},
+		update = bson.M{
+			"$set": bson.M{
+				fmt.Sprintf("pokedex.%d.caught", pokemon.Dex-1): true,
+			},
 		}
 		_, err = userCollection.UpdateOne(context.TODO(), filter, update)
 		if err != nil {
@@ -140,14 +138,9 @@ func Evolve(username string, fromDex, toDex int) error {
 
 	// add to pokedex
 	update = bson.M{
-		"$set": bson.D{
-			{
-				fmt.Sprintf("pokedex.%d.caught", toDex-1),
-				true,
-			}, {
-				fmt.Sprintf("pokedex.%d.encountered", toDex-1),
-				true,
-			},
+		"$set": bson.M{
+			fmt.Sprintf("pokedex.%d.caught", toDex-1): true,
+			fmt.Sprintf("pokedex.%d.encountered", toDex-1): true,
 		},
 	}
 	filter = bson.M{"_id": user.ID}
