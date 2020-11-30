@@ -12,34 +12,6 @@ type Bounds struct {
 	MaxLng float64
 }
 
-func (b *Bounds) NW() Coords {
-	return Coords{
-		Lat: b.MaxLat,
-		Lng: b.MinLng,
-	}
-}
-
-func (b *Bounds) NE() Coords {
-	return Coords{
-		Lat: b.MaxLat,
-		Lng: b.MaxLng,
-	}
-}
-
-func (b *Bounds) SW() Coords {
-	return Coords{
-		Lat: b.MinLat,
-		Lng: b.MinLng,
-	}
-}
-
-func (b *Bounds) SE() Coords {
-	return Coords{
-		Lat: b.MinLat,
-		Lng: b.MaxLng,
-	}
-}
-
 func (b *Bounds) InRange(s Coords) bool {
 	return s.Lat >= b.MinLat &&
 		s.Lat < b.MaxLat &&
