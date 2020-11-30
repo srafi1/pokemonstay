@@ -51,9 +51,7 @@ func SetLocation(username string, location spawn.Coords) error {
 	_, err := userCollection.UpdateOne(
 		context.TODO(),
 		bson.M{"username": username},
-		bson.D{
-			{"$set", bson.D{{"location", location}}},
-		},
+		bson.M{"$set": bson.M{"location": location}},
 	)
 	return err
 }
