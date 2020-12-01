@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { Redirect, Route, BrowserRouter as Router } from 'react-router-dom';
+import { Redirect, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 import 'typeface-roboto';
 import './index.css';
 
@@ -18,24 +18,26 @@ import Pokedex from './components/Pokedex';
 
 const router = (
   <Router>
-    <Route exact path="/"
-      render={() => <Unauthenticated component={Home} />} />
-    <Route exact path="/login"
-      render={() => <Unauthenticated component={Login} />} />
-    <Route exact path="/register"
-      render={() => <Unauthenticated component={Register} />} />
-    <Route exact path="/logout" component={Logout} />
-    <Route exact path="/map"
-      render={() => <Authenticated component={Map} />} />
-    <Route exact path="/profile"
-      render={() => <Authenticated component={Profile} />} />
-    <Route exact path="/pokemon"
-      render={() => <Authenticated component={Pokemon} />} />
-    <Route exact path="/pokedex"
-      render={() => <Authenticated component={Pokedex} />} />
+    <Switch>
+      <Route exact path="/"
+        render={() => <Unauthenticated component={Home} />} />
+      <Route exact path="/login"
+        render={() => <Unauthenticated component={Login} />} />
+      <Route exact path="/register"
+        render={() => <Unauthenticated component={Register} />} />
+      <Route exact path="/logout" component={Logout} />
+      <Route exact path="/map"
+        render={() => <Authenticated component={Map} />} />
+      <Route exact path="/profile"
+        render={() => <Authenticated component={Profile} />} />
+      <Route exact path="/pokemon"
+        render={() => <Authenticated component={Pokemon} />} />
+      <Route exact path="/pokedex"
+        render={() => <Authenticated component={Pokedex} />} />
 
-    <Route path="/*"
-      render={() => <Redirect to="/" />} />
+      <Route path="/*"
+        render={() => <Redirect to="/" />} />
+    </Switch>
   </Router>
 )
 
