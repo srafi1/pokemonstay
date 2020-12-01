@@ -2,6 +2,10 @@
 
 Pokemon Go in Google Maps. Run around in the map instead of in real life to catch pokemon.
 
+<p align="center">
+  <img src="./screenshots/demo.gif">
+</p>
+
 The game is online [here](https://pokemonstay.shakilrafi.com).
 
 Powered by React, Google Maps API, [PokeAPI](https://pokeapi.co/), Go, and MongoDB.
