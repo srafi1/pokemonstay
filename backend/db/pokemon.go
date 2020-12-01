@@ -117,18 +117,12 @@ func Evolve(username string, fromDex, toDex int) error {
 	err = cursor.All(context.TODO(), &pokemon)
 	if err != nil {
 		return err
+	} else if len(pokemon) < 3 {
+		return fmt.Errorf("not enough pokemon for evolution")
 	}
 
-	// modify first one to be evolved
-	update := bson.M{"$set": bson.M{"dex": toDex}}
-	filter = bson.M{"_id": pokemon[0].ID}
-	_, err = pokemonCollection.UpdateOne(context.TODO(), filter, update)
-	if err != nil {
-		return err
-	}
-
-	// delete last two
-	for _, p := range pokemon[1:] {
+	// delete old ones
+	for _, p := range pokemon {
 		filter = bson.M{"_id": p.ID}
 		_, err = pokemonCollection.DeleteOne(context.TODO(), filter)
 		if err != nil {
@@ -136,10 +130,19 @@ func Evolve(username string, fromDex, toDex int) error {
 		}
 	}
 
+	// add an evolved version from the first one
+	pokemon[0].Dex = toDex
+	// set ID to empty so the db can make a new one and put it at the end
+	pokemon[0].ID = primitive.ObjectID{}
+	_, err = pokemonCollection.InsertOne(context.TODO(), pokemon[0])
+	if err != nil {
+		return err
+	}
+
 	// add to pokedex
-	update = bson.M{
+	update := bson.M{
 		"$set": bson.M{
-			fmt.Sprintf("pokedex.%d.caught", toDex-1): true,
+			fmt.Sprintf("pokedex.%d.caught", toDex-1):      true,
 			fmt.Sprintf("pokedex.%d.encountered", toDex-1): true,
 		},
 	}
