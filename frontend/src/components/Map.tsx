@@ -165,7 +165,7 @@ const Map = compose(
   // this api key is locked to *.shakilrafi.com
   withProps({
     googleMapURL:
-      "https://maps.googleapis.com/maps/api/js?key=AIzaSyAC4hh69r1rQ-rCtDZ8muFywZQFKp3_ZsM&v=3.exp",
+      "https://maps.googleapis.com/maps/api/js?key=AIzaSyDfdcPAvRTJx2mIt4iK6FiBJ3T1nea9fqM&v=3.exp",
     loadingElement: <Loading />,
     containerElement: <Box height={1} />,
     mapElement: <Box height={1} />
